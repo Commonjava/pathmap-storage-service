@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Pathmap Storage Service</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/wingcss/0.1.8/wing.min.css"/>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script type="text/javascript">
+      var app = angular.module("Pathmap", []);
+
+      //Controller Part
+      app.controller("PathmapController", function ($scope, $http) {
+        //Initialize page with default data
+        $scope.stats = {};
+
+        //Now load the data from server
+        _refreshPageData();
+
+        function _refreshPageData() {
+          $http({
+            method: 'GET',
+            url: '/info'
+          }).then(function successCallback(response) {
+            $scope.stats = response.data;
+          }, function errorCallback(response) {
+            console.log(response.statusText);
+          });
+        }
+      });
+    </script>
+</head>
+<body ng-app="Pathmap" ng-controller="PathmapController">
+
+<div class="container">
+    <h1>Pathmap</h1>
+    <hr/>
+
+
+    <div class="cards">
+        <div class="card">
+            <h5 class="card-header">About</h5>
+            <p class="card-body"><b>Pathmap Storage Service</b> provides both REST endpoints and Kafka topics to manage file content.</p>
+        </div>
+
+        <div class="card">
+            <h5 class="card-header">Configuration</h5>
+            <p class="card-body">Click <a target="_new" href="config">HERE</a> to see the <b>configuration</b>.</p>
+        </div>
+    </div>
+
+    <div style="position: fixed; bottom: 5%; text-align: center;">
+        <a target="_new" href="https://github.com/Commonjava/pathmap-storage-service">Github Project</a></span> |
+        Version: {{ stats.version }} |
+        Commit ID: <a target="_new" href="http://github.com/commonjava/pathmap-storage-service/commit/{{stats['commit-id']}}">{{ stats["commit.id"] }}</a> |
+        Built on {{ stats["timestamp"] }} by {{ stats["builder"] }}
+    </div>
+
+</div>
+
+</body>
+</html>
