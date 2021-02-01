@@ -9,7 +9,7 @@ import java.io.File;
 
 @Startup
 @ApplicationScoped
-public class IndyStorageConfiguration
+public class IndyPathMappedConfiguration
 {
 
     public static final File DEFAULT_BASEDIR = new File( "/opt/indy/var/lib/indy/storage" );

@@ -1,7 +1,7 @@
 package org.commonjava.service.storage.core;
 
 import org.commonjava.service.storage.config.CassandraConfiguration;
-import org.commonjava.service.storage.config.IndyStorageConfiguration;
+import org.commonjava.service.storage.config.IndyPathMappedConfiguration;
 import org.commonjava.storage.pathmapped.config.DefaultPathMappedStorageConfig;
 import org.commonjava.storage.pathmapped.config.PathMappedStorageConfig;
 import org.commonjava.storage.pathmapped.core.FileBasedPhysicalStore;
@@ -31,7 +31,7 @@ public class FileManagerProducer
     CassandraConfiguration cassandraConfig;
 
     @Inject
-    IndyStorageConfiguration storageConfig;
+    IndyPathMappedConfiguration storageConfig;
 
     @Produces
     public PathMappedFileManager getFileManager()

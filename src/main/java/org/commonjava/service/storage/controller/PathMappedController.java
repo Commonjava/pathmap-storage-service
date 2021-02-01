@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 @ApplicationScoped
-public class FilesController
+public class PathMappedController
 {
 
     @Inject

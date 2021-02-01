@@ -1,6 +1,6 @@
 package org.commonjava.service.storage.jaxrs;
 
-import org.commonjava.service.storage.controller.FilesController;
+import org.commonjava.service.storage.controller.PathMappedController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,17 +14,19 @@ import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.io.InputStream;
 
-@Path( "/api/content/{packageType:(maven|npm|generic-http)}/{type: (hosted|group|remote)}/{name}" )
-public class FilesResources
+@Path( "/api/pathmapped" )
+public class PathMappedResource
 {
 
     private final Logger logger = LoggerFactory.getLogger( getClass() );
 
+    private static final String CONCRETE_CONTENT_PATH = "/content/{packageType}/{type: (hosted|group|remote)}/{name}/{path: (.*)}";
+
     @Inject
-    FilesController controller;
+    PathMappedController controller;
 
     @GET
-    @Path( "/{path: (.*)}" )
+    @Path( CONCRETE_CONTENT_PATH )
     public Response doGet(
                     @PathParam( "packageType" ) String packageType,
                     @PathParam( "type" ) String type,
