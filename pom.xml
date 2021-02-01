@@ -37,6 +37,7 @@
         <quarkus.platform.version>1.9.2.Final</quarkus.platform.version>
         <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
         <o11phant.version>1.3-SNAPSHOT</o11phant.version>
+        <path-mapped-storage.version>1.9-SNAPSHOT</path-mapped-storage.version>
     </properties>
 
     <dependencyManagement>
@@ -112,6 +113,24 @@
             <artifactId>o11yphant-honeycomb-api</artifactId>
             <version>${o11phant.version}</version>
         </dependency>
+
+        <!-- Path-mapped storage -->
+        <dependency>
+            <groupId>org.commonjava.util</groupId>
+            <artifactId>path-mapped-storage</artifactId>
+            <version>${path-mapped-storage.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.commonjava.util</groupId>
+            <artifactId>path-mapped-pathdb-datastax</artifactId>
+            <version>${path-mapped-storage.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.commonjava.util</groupId>
+            <artifactId>path-mapped-common</artifactId>
+            <version>${path-mapped-storage.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

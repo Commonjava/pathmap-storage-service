@@ -35,3 +35,10 @@ honeycomb:
     dataset: test
     write-key: 61c935e7d6f5ef5b992fe142deb2569c
     base-sample-rate: 50
+
+cassandra:
+    host: localhost
+    port: 9042
+    keyspace: indystorage
+    user: cassandra
+    pass: cassandra
