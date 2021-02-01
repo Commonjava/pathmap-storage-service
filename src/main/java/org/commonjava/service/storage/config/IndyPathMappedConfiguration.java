@@ -1,10 +1,12 @@
 package org.commonjava.service.storage.config;
 
 import io.quarkus.runtime.Startup;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import java.io.File;
 
 @Startup
@@ -12,11 +14,13 @@ import java.io.File;
 public class IndyPathMappedConfiguration
 {
 
-    public static final File DEFAULT_BASEDIR = new File( "/opt/indy/var/lib/indy/storage" );
+    @Inject
+    @ConfigProperty( name = "storage.dir", defaultValue = "/opt/indy/var/lib/indy/storage" )
+    public File storageDir;
 
     public File getStorageRootDirectory()
     {
-        return DEFAULT_BASEDIR;
+        return storageDir;
     }
 
     @PostConstruct

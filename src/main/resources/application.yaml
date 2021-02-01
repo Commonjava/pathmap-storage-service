@@ -42,3 +42,6 @@ cassandra:
     keyspace: indystorage
     user: cassandra
     pass: cassandra
+
+storage:
+    dir: /var/lib/indy/storage
