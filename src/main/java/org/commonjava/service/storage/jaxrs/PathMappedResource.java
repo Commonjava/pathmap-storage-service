@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static org.commonjava.storage.pathmapped.util.PathMapUtils.ROOT_DIR;
 
 @Path( "/api/pathmapped" )
@@ -42,6 +43,7 @@ public class PathMappedResource
 
     @GET
     @Path( CONCRETE_CONTENT_PATH )
+    @Produces( APPLICATION_OCTET_STREAM )
     public Response doGet(
                     @PathParam( "packageType" ) String packageType,
                     @PathParam( "type" ) String type,
@@ -60,10 +62,12 @@ public class PathMappedResource
         }
         catch ( IOException e )
         {
-            e.printStackTrace();
+            final String message = "Failed to get the file " + path + ".";
+
+            logger.error( message, e );
+            return responseHelper.formatResponse( e, message );
         }
 
-        return Response.ok().build();
     }
 
     @PUT
@@ -75,7 +79,17 @@ public class PathMappedResource
                     final @PathParam( "path" ) String path, final @Context UriInfo uriInfo,
                     final @Context HttpRequest request )
     {
-        controller.create( packageType, type, name, path, request );
+        try
+        {
+            controller.create( packageType, type, name, path, request );
+        }
+        catch ( IOException e )
+        {
+            final String message = "Failed to store the file " + path + ".";
+
+            logger.error( message, e );
+            return responseHelper.formatResponse( e, message );
+        }
 
         return Response.ok().build();
     }

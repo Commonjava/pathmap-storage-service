@@ -44,4 +44,4 @@ cassandra:
     pass: cassandra
 
 storage:
-    dir: /var/lib/indy/storage
+    dir: "/opt/indy/var/lib/indy/storage/storage"

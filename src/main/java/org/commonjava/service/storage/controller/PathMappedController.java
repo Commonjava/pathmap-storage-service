@@ -82,7 +82,7 @@ public class PathMappedController
         return new PathMappedListResult( packageType, type, name, path, list );
     }
 
-    public void create( String packageType, String type, String name, String path, HttpRequest request )
+    public void create( String packageType, String type, String name, String path, HttpRequest request ) throws IOException
     {
         String fileSystem = getFileSystem( packageType, type, name );
 
@@ -94,6 +94,7 @@ public class PathMappedController
         catch ( IOException e )
         {
             logger.error( "", e );
+            throw e;
         }
 
     }
