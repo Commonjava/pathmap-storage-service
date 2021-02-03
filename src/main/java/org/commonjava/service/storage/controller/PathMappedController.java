@@ -1,6 +1,8 @@
 package org.commonjava.service.storage.controller;
 
 import org.apache.commons.io.IOUtils;
+import org.commonjava.service.storage.jaxrs.PathMappedFileSystemResult;
+import org.commonjava.service.storage.jaxrs.PathMappedFileSystemSetResult;
 import org.commonjava.service.storage.jaxrs.PathMappedListResult;
 import org.commonjava.storage.pathmapped.core.PathMappedFileManager;
 import org.commonjava.storage.pathmapped.spi.PathDB;
@@ -14,6 +16,8 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
+import java.util.Set;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -92,5 +96,25 @@ public class PathMappedController
             logger.error( "", e );
         }
 
+    }
+
+    public PathMappedFileSystemSetResult getFileSystemContaining( Collection<String> candidates, String path )
+    {
+        Set<String> fileSystems = fileManager.getFileSystemContaining( candidates, path );
+        return new PathMappedFileSystemSetResult( path, fileSystems );
+    }
+
+    public PathMappedFileSystemResult getFileInfo( String packageType, String type, String name, String path )
+    {
+        String fileSystem = getFileSystem( packageType, type, name );
+
+        String storagePath = fileManager.getFileStoragePath( fileSystem, path );
+        long fileLength = fileManager.getFileLength( fileSystem, path );
+
+        PathMappedFileSystemResult result = new PathMappedFileSystemResult( packageType, type, name, path );
+        result.setStoragePath( storagePath );
+        result.setFileLength( fileLength );
+
+        return result;
     }
 }

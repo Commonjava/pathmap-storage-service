@@ -6,8 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -125,6 +127,38 @@ public class PathMappedResource
         logger.info( "List, packageType:{}, type:{}, name:{}, path:{}, recursive:{}", packageType, type, name, path,
                       recursive );
         PathMappedListResult result = controller.list( packageType, type, name, path, recursive, fileType, limit );
+        return responseHelper.formatOkResponseWithJsonEntity( result );
+    }
+
+    @POST
+    @Path( "/filesystem/containing/{path: (.*)}" )
+    @Consumes( APPLICATION_JSON )
+    @Produces( APPLICATION_JSON )
+    public Response getFileSystemContaining( final @PathParam( "path" ) String path, final PathMappedFileSystemSetRequest request )
+    {
+
+        logger.info( "FileSystemContaining, path: {}, request: {}", path, request );
+
+        PathMappedFileSystemSetResult result = controller.getFileSystemContaining( request.getCandidates(), path);
+
+        return responseHelper.formatOkResponseWithJsonEntity( result );
+    }
+
+    @GET
+    @Path( "/filesystem" + CONCRETE_CONTENT_PATH + "/info" )
+    @Produces( APPLICATION_JSON )
+    public Response doGetStoragePath(
+                    @PathParam( "packageType" ) String packageType,
+                    @PathParam( "type" ) String type,
+                    @PathParam( "name" ) String name, @PathParam( "path" ) String path,
+                    @Context UriInfo uriInfo )
+    {
+        logger.info( "Type: {}, name: {}, path: {}", type, name, path );
+
+        PathMappedFileSystemResult result = controller.getFileInfo( packageType, type, name, path );
+
+        logger.info( "File info: {}", result );
+
         return responseHelper.formatOkResponseWithJsonEntity( result );
     }
 
