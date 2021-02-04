@@ -1,6 +1,14 @@
 package org.commonjava.service.storage.jaxrs;
 
 import org.commonjava.service.storage.controller.PathMappedController;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import static org.eclipse.microprofile.openapi.annotations.enums.ParameterIn.PATH;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,11 +51,14 @@ public class PathMappedResource
 
     @GET
     @Path( CONCRETE_CONTENT_PATH )
+    @Operation( summary = "Get the file by the specified path." )
+    @APIResponses( { @APIResponse ( responseCode = "200", description = "The request file.") } )
     @Produces( APPLICATION_OCTET_STREAM )
     public Response doGet(
-                    @PathParam( "packageType" ) String packageType,
-                    @PathParam( "type" ) String type,
-                    @PathParam( "name" ) String name, @PathParam( "path" ) String path,
+                    final @Parameter( in = PATH, required = true ) @PathParam( "packageType" ) String packageType,
+                    final @Parameter( in = PATH, schema = @Schema( enumeration = { "hosted", "group", "remote" } ),
+                                    required = true ) @PathParam( "type" ) String type,
+                    final @Parameter( in = PATH, required = true ) @PathParam( "name" ) String name, @PathParam( "path" ) String path,
                     @Context UriInfo uriInfo )
     {
         logger.info( "Type: {}, name: {}, path: {}", type, name, path );
@@ -72,12 +83,15 @@ public class PathMappedResource
 
     @PUT
     @Path( CONCRETE_CONTENT_PATH )
+    @Operation( summary = "Store the file." )
+    @APIResponses( { @APIResponse ( responseCode = "200", description = "The file is stored.") })
     public Response doCreate(
-                    final @PathParam( "packageType" ) String packageType,
-                    final @PathParam( "type" )
-                                    String type, final @PathParam( "name" ) String name,
-                    final @PathParam( "path" ) String path, final @Context UriInfo uriInfo,
-                    final @Context HttpRequest request )
+                    final @Parameter( in = PATH, required = true ) @PathParam( "packageType" ) String packageType,
+                    final @Parameter( in = PATH, schema = @Schema( enumeration = { "hosted", "group",
+                                    "remote" } ), required = true ) @PathParam( "type" ) String type,
+                    final @Parameter( in = PATH, required = true ) @PathParam( "name" ) String name,
+                    final @Parameter( in = PATH, required = true ) @PathParam( "path" ) String path,
+                    final @Context UriInfo uriInfo, final @Context HttpRequest request )
     {
         try
         {
@@ -96,10 +110,14 @@ public class PathMappedResource
 
     @DELETE
     @Path( CONCRETE_CONTENT_PATH )
+    @Operation( summary = "Delete the file." )
+    @APIResponses( { @APIResponse ( responseCode = "200", description = "The file is removed.") })
     public Response doDelete(
-                    @PathParam( "packageType" ) String packageType,
-                    @PathParam( "type" ) String type,
-                    @PathParam( "name" ) String name, @PathParam( "path" ) String path,
+                    final @Parameter( in = PATH, required = true ) @PathParam( "packageType" ) String packageType,
+                    final @Parameter( in = PATH, schema = @Schema( enumeration = { "hosted", "group",
+                                    "remote" } ), required = true ) @PathParam( "type" ) String type,
+                    final @Parameter( in = PATH, required = true ) @PathParam( "name" ) String name,
+                    final @Parameter( in = PATH, required = true ) @PathParam( "path" ) String path,
                     @Context UriInfo uriInfo )
     {
         logger.info( "Delete. type: {}, name: {}, path: {}", type, name, path );
@@ -109,17 +127,21 @@ public class PathMappedResource
         return Response.ok().build();
     }
 
-
     @GET
     @Path( BROWSE_BASE )
+    @Operation( summary = "List the files under the repository root directory." )
+    @APIResponses( { @APIResponse( responseCode = "200",
+                    content = @Content( schema = @Schema( implementation = PathMappedListResult.class ) ),
+                    description = "The files under the repository root directory." ) } )
     @Produces( APPLICATION_JSON )
-    public Response listRoot( final @PathParam( "packageType" ) String packageType,
-                          final @PathParam( "type" ) String type,
-                          final @PathParam( "name" ) String name,
-                          final @PathParam( "path" ) String path,
-                          final @QueryParam( "recursive" ) boolean recursive,
-                          final @QueryParam( "type" ) String fileType,
-                          final @QueryParam( "limit" ) int limit )
+    public Response listRoot(
+                    final @Parameter( in = PATH, required = true ) @PathParam( "packageType" ) String packageType,
+                    final @Parameter( in = PATH, schema = @Schema( enumeration = { "hosted", "group",
+                                    "remote" } ), required = true ) @PathParam( "type" ) String type,
+                    final @Parameter( in = PATH, required = true ) @PathParam( "name" ) String name,
+                    final @Parameter( in = PATH, required = true ) @PathParam( "path" ) String path,
+                    final @QueryParam( "recursive" ) boolean recursive, final @QueryParam( "type" ) String fileType,
+                    final @QueryParam( "limit" ) int limit )
     {
         logger.info( "List, packageType:{}, type:{}, name:{}, path:{}, recursive:{}", packageType, type, name, path,
                       recursive );
@@ -129,11 +151,16 @@ public class PathMappedResource
 
     @GET
     @Path( BROWSE_BASE + "/{path: (.*)}" )
+    @Operation( summary = "List the files under the specified path." )
+    @APIResponses( { @APIResponse( responseCode = "200",
+                    content = @Content( schema = @Schema( implementation = PathMappedListResult.class ) ),
+                    description = "The files under the path." ) } )
     @Produces( APPLICATION_JSON )
-    public Response list( final @PathParam( "packageType" ) String packageType,
-                          final @PathParam( "type" ) String type,
-                          final @PathParam( "name" ) String name,
-                          final @PathParam( "path" ) String path,
+    public Response list( final @Parameter( in = PATH, required = true ) @PathParam( "packageType" ) String packageType,
+                          final @Parameter( in = PATH, schema = @Schema( enumeration = { "hosted", "group",
+                                          "remote" } ), required = true ) @PathParam( "type" ) String type,
+                          final @Parameter( in = PATH, required = true ) @PathParam( "name" ) String name,
+                          final @Parameter( in = PATH, required = true ) @PathParam( "path" ) String path,
                           final @QueryParam( "recursive" ) boolean recursive,
                           final @QueryParam( "type" ) String fileType,
                           final @QueryParam( "limit" ) int limit )
@@ -146,6 +173,12 @@ public class PathMappedResource
 
     @POST
     @Path( "/filesystem/containing/{path: (.*)}" )
+    @Operation( summary = "Get the repositories containing the specified path." )
+    @RequestBody( description = "The filesystems collection in JSON", name = "body", required = true,
+                    content = @Content( schema = @Schema( implementation = PathMappedFileSystemSetRequest.class ) ) )
+    @APIResponses( { @APIResponse( responseCode = "200",
+                    content = @Content( schema = @Schema( implementation = PathMappedFileSystemSetResult.class ) ),
+                    description = "The filesystems that containing the file." ) } )
     @Consumes( APPLICATION_JSON )
     @Produces( APPLICATION_JSON )
     public Response getFileSystemContaining( final @PathParam( "path" ) String path, final PathMappedFileSystemSetRequest request )
@@ -160,11 +193,17 @@ public class PathMappedResource
 
     @GET
     @Path( "/filesystem" + CONCRETE_CONTENT_PATH + "/info" )
+    @Operation( summary = "Get the detailed info of the file." )
+    @APIResponses( { @APIResponse( responseCode = "200",
+                    content = @Content( schema = @Schema( implementation = PathMappedFileSystemResult.class ) ),
+                    description = "The detailed info of the file." ) } )
     @Produces( APPLICATION_JSON )
-    public Response doGetStoragePath(
-                    @PathParam( "packageType" ) String packageType,
-                    @PathParam( "type" ) String type,
-                    @PathParam( "name" ) String name, @PathParam( "path" ) String path,
+    public Response doGetFileInfo(
+                    final @Parameter( in = PATH, required = true ) @PathParam( "packageType" ) String packageType,
+                    final @Parameter( in = PATH, schema = @Schema( enumeration = { "hosted", "group",
+                                    "remote" } ), required = true ) @PathParam( "type" ) String type,
+                    final @Parameter( in = PATH, required = true ) @PathParam( "name" ) String name,
+                    final @Parameter( in = PATH, required = true ) @PathParam( "path" ) String path,
                     @Context UriInfo uriInfo )
     {
         logger.info( "Type: {}, name: {}, path: {}", type, name, path );
@@ -178,6 +217,12 @@ public class PathMappedResource
 
     @POST
     @Path( "/filesystem/cleanup" )
+    @Operation( summary = "Cleanup the files under the specified repositories." )
+    @RequestBody( description = "The cleanup request definition JSON", name = "body", required = true,
+                    content = @Content( schema = @Schema( implementation = PathMappedCleanupRequest.class ) ) )
+    @APIResponses( { @APIResponse( responseCode = "200",
+                    content = @Content( schema = @Schema( implementation = PathMappedCleanupResult.class ) ),
+                    description = "The status of cleaning files." ) } )
     @Consumes( APPLICATION_JSON )
     @Produces( APPLICATION_JSON )
     public Response doCleanup( final PathMappedCleanupRequest request )
