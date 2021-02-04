@@ -1,6 +1,7 @@
 package org.commonjava.service.storage.controller;
 
 import org.apache.commons.io.IOUtils;
+import org.commonjava.service.storage.jaxrs.PathMappedCleanupResult;
 import org.commonjava.service.storage.jaxrs.PathMappedFileSystemResult;
 import org.commonjava.service.storage.jaxrs.PathMappedFileSystemSetResult;
 import org.commonjava.service.storage.jaxrs.PathMappedListResult;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -117,5 +119,29 @@ public class PathMappedController
         result.setFileLength( fileLength );
 
         return result;
+    }
+
+    public PathMappedCleanupResult cleanup( String path, Set<String> repositories )
+    {
+        Set<String> success = new HashSet<>();
+        Set<String> failures = new HashSet<>();
+        for ( String repo : repositories )
+        {
+            if ( fileManager.delete( repo, path ) )
+            {
+                success.add( repo );
+            }
+            else
+            {
+                failures.add( repo );
+            }
+        }
+
+        PathMappedCleanupResult result = new PathMappedCleanupResult( path );
+        result.setSuccess( success );
+        result.setFailures( failures );
+
+        return result;
+
     }
 }
