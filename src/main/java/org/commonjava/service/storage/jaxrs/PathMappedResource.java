@@ -176,4 +176,19 @@ public class PathMappedResource
         return responseHelper.formatOkResponseWithJsonEntity( result );
     }
 
+    @POST
+    @Path( "/filesystem/cleanup" )
+    @Consumes( APPLICATION_JSON )
+    @Produces( APPLICATION_JSON )
+    public Response doCleanup( final PathMappedCleanupRequest request )
+    {
+        logger.info( "Cleanup, path:{}, fileSystems:{}", request.getPath(), request.getRepositories() );
+
+        PathMappedCleanupResult result = controller.cleanup( request.getPath(), request.getRepositories() );
+
+        logger.info( "Cleanup result: {}", result );
+
+        return responseHelper.formatOkResponseWithJsonEntity( result );
+    }
+
 }
