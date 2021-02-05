@@ -13,7 +13,7 @@ quarkus:
     log:
         level: INFO
         category:
-            "org.commonjava.util.pathmap":
+            "org.commonjava.service.storage":
                 level: DEBUG
         console:
             level: DEBUG
@@ -45,3 +45,30 @@ cassandra:
 
 storage:
     dir: "/opt/indy/var/lib/indy/storage/storage"
+
+
+"%dev":
+    quarkus:
+        kubernetes-config:
+            enabled: false
+        log:
+            level: TRACE
+            min-level: TRACE
+            category:
+                "org.commonjava.service.storage":
+                    level: TRACE
+            console:
+                enable: true
+            file:
+                enable: true
+                path: "/tmp/pathmap-storage-service.log"
+                format: "%d{HH:mm:ss} %-5p [%c{2.}] (%t) %s%e%n"
+                rotation:
+                    max-backup-index: 5
+                    max-file-size: 10M
+
+    cassandra:
+        host: localhost
+        port: 9042
+        user: cassandra
+        pass: cassandra
