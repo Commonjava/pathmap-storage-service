@@ -3,18 +3,18 @@ package org.commonjava.service.storage.event;
 public class FileEvent
 {
 
-    private String tackingID;
+    private String trackingID;
 
     private EventMetadata eventMetadata;
 
-    public String getTackingID()
+    public String getTrackingID()
     {
-        return tackingID;
+        return trackingID;
     }
 
-    public void setTackingID( String tackingID )
+    public void setTrackingID( String trackingID )
     {
-        this.tackingID = tackingID;
+        this.trackingID = trackingID;
     }
 
     public EventMetadata getEventMetadata()
