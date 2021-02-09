@@ -46,6 +46,10 @@ cassandra:
 storage:
     dir: "/opt/indy/var/lib/indy/storage/storage"
 
+kafka:
+    bootstrap:
+        servers: "localhost:9092"
+
 
 "%dev":
     quarkus:
@@ -72,3 +76,24 @@ storage:
         port: 9042
         user: cassandra
         pass: cassandra
+
+    kafka:
+        bootstrap:
+            servers: "localhost:9092"
+
+    # Configuring the incoming/outgoing channel
+    mp:
+        messaging:
+            outgoing:
+                file-event-out:
+                    connector: smallrye-kafka
+                    topic: file-event
+                    value:
+                        serializer: io.quarkus.kafka.client.serialization.ObjectMapperSerializer
+            incoming:
+                file-event-in:
+                    connector: smallrye-kafka
+                    topic: file-event
+                    value:
+                        deserializer: org.commonjava.service.storage.event.FileEventDeserializer
+
