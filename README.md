@@ -1,5 +1,5 @@
 # Pathmap Storage Service
-Pathmap Storage Service ...
+Pathmap Storage Service is a single full-functional service for indy filesystem management, including file list, reading, writing and deleting.
 
 ## Prerequisite
 1. jdk11
@@ -7,20 +7,19 @@ Pathmap Storage Service ...
 
 ## Configure services
 
-
+To make it run, Cassandra, Kafka, and Honeycomb(optional) need to be configured. Please see the example in `application.yaml`.
 
 ## Try it
 
-### 1. Start the database
+### 1. Start the database and the message broker
 
-You need a Cassandra to store the PathMap info. To ease the setup, we have provided a `docker-compose.yml` file which start a Cassandra  container and bind the network ports.
+It needs a Cassandra to store the PathMap info as well as the message broker(Kafka) for event handler. To ease the setup, we have provided a `docker-compose.yml` file which start the containers and bind the network ports.
 
-The database can be started using:
 ```
 docker-compose up
 ```
 
-Once the database is up you can start your Quarkus application.
+Once the database and message broker containers up you can start your Quarkus application.
 
 
 ### 2. Start gateway in debug mode
