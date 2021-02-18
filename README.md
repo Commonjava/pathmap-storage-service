@@ -21,10 +21,16 @@ docker-compose up
 
 Once the database and message broker containers up you can start your Quarkus application.
 
-
 ### 2. Start gateway in debug mode
 ```
 $ mvn quarkus:dev
 ```
+
+### 3. Verify the installation 
+
+```
+http://localhost:8080/swagger-ui/
+```
+
 
 
