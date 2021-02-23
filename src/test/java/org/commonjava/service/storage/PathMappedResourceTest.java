@@ -1,7 +1,9 @@
 package org.commonjava.service.storage;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import io.vertx.core.json.JsonObject;
 import org.apache.commons.io.IOUtils;
 import org.commonjava.storage.pathmapped.core.PathMappedFileManager;
 import org.junit.jupiter.api.Assertions;
@@ -12,6 +14,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import static io.restassured.RestAssured.given;
 
@@ -99,6 +102,45 @@ public class PathMappedResourceTest
         Assertions.assertEquals( 200, response.statusCode() );
         Assertions.assertEquals( "quarkus-junit5-1.12.0.Final.jar",
                                  String.join( ",", response.jsonPath().getList( "list" ) ) );
+    }
+
+    @Test
+    public void testCleanup()
+    {
+        JsonObject request = new JsonObject();
+        request.put( "path", PATH );
+        request.put( "repositories",
+                     Arrays.asList( "maven:remote:central", "maven:hosted:pnc-builds", "maven:group:public" ) );
+
+        Response response = given().contentType( ContentType.JSON )
+                                   .body( request.toString() )
+                                   .post( "/api/pathmapped/filesystem/cleanup" )
+                                   .then()
+                                   .extract()
+                                   .response();
+
+        Assertions.assertEquals( 200, response.statusCode() );
+
+    }
+
+    @Test
+    public void testFileSystemContaining()
+    {
+        JsonObject request = new JsonObject();
+        request.put( "candidates",
+                     Arrays.asList( "maven:remote:central", "maven:hosted:pnc-builds", "maven:group:public" ) );
+
+        Response response = given().contentType( ContentType.JSON )
+                                   .body( request.toString() )
+                                   .pathParam( "path", PATH )
+                                   .post( "/api/pathmapped/filesystem/containing/{path}" )
+                                   .then()
+                                   .extract()
+                                   .response();
+
+        Assertions.assertEquals( 200, response.statusCode() );
+        Assertions.assertEquals( "maven:remote:central",
+                                 String.join( ",", response.jsonPath().getList( "fileSystems" ) ) );
     }
 
 }
