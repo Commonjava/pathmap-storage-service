@@ -1,18 +1,18 @@
 package org.commonjava.service.storage.jaxrs;
 
-import java.util.Set;
+import java.util.List;
 
 public class PathMappedFileSystemSetRequest
 {
 
-    public Set<String> candidates;
+    public List<String> candidates;
 
-    public Set<String> getCandidates()
+    public List<String> getCandidates()
     {
         return candidates;
     }
 
-    public void setCandidates( Set<String> candidates )
+    public void setCandidates( List<String> candidates )
     {
         this.candidates = candidates;
     }
