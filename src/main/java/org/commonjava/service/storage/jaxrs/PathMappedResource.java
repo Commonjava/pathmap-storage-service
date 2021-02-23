@@ -65,11 +65,19 @@ public class PathMappedResource
 
         try
         {
-            InputStream in = controller.openInputStream( packageType, type, name, path );
+            if ( controller.exists( packageType, type, name, path ) )
+            {
+                InputStream in = controller.openInputStream( packageType, type, name, path );
 
-            final Response.ResponseBuilder builder = Response.ok( in );
+                final Response.ResponseBuilder builder = Response.ok( in );
 
-            return builder.build();
+                return builder.build();
+            }
+            else
+            {
+                return Response.status( Response.Status.NOT_FOUND ).build();
+            }
+
         }
         catch ( IOException e )
         {

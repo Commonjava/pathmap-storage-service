@@ -52,6 +52,19 @@ public class PathMappedResourceTest
     }
 
     @Test
+    public void testGetNonExistingFile()
+    {
+        given().pathParam( "packageType", PACKAGE_TYPE )
+               .pathParam( "type", TYPE )
+               .pathParam( "name", NAME )
+               .pathParam( "path", "non-existing-path" )
+               .when()
+               .get( "/api/pathmapped/content/{packageType}/{type}/{name}/{path}" )
+               .then()
+               .statusCode( 404 );
+    }
+
+    @Test
     public void testGetFileInfo()
     {
         Response response = given().pathParam( "packageType", PACKAGE_TYPE )

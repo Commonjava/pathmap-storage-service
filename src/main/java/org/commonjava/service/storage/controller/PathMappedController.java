@@ -47,6 +47,12 @@ public class PathMappedController
         return packageType + ":" + type + ":" + name;
     }
 
+    public boolean exists( String packageType, String type, String name, String path )
+    {
+        String fileSystem = getFileSystem( packageType, type, name );
+        return fileManager.exists( fileSystem, path );
+    }
+
     public boolean delete( String packageType, String type, String name, String path )
     {
         String fileSystem = getFileSystem( packageType, type, name );
