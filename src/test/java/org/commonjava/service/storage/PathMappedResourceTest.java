@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 
@@ -101,6 +102,27 @@ public class PathMappedResourceTest
 
         Assertions.assertEquals( 200, response.statusCode() );
         Assertions.assertEquals( "quarkus-junit5-1.12.0.Final.jar",
+                                 String.join( ",", response.jsonPath().getList( "list" ) ) );
+    }
+
+    @Test
+    public void testListRoot()
+    {
+        Response response = given().pathParam( "packageType", PACKAGE_TYPE )
+                                   .pathParam( "type", TYPE )
+                                   .pathParam( "name", NAME )
+                                   .queryParam( "recursive", true )
+                                   .when()
+                                   .get( "/api/pathmapped/browse/{packageType}/{type}/{name}" )
+                                   .then()
+                                   .extract()
+                                   .response();
+
+        List<String> expectedList = Arrays.asList( "io/", "io/quarkus/", "io/quarkus/quarkus-junit5/",
+                                                   "io/quarkus/quarkus-junit5/quarkus-junit5-1.12.0.Final.jar" );
+
+        Assertions.assertEquals( 200, response.statusCode() );
+        Assertions.assertEquals( String.join( ",", expectedList ),
                                  String.join( ",", response.jsonPath().getList( "list" ) ) );
     }
 
