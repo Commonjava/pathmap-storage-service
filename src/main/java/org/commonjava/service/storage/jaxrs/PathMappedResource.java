@@ -147,12 +147,10 @@ public class PathMappedResource
                     final @Parameter( in = PATH, schema = @Schema( enumeration = { "hosted", "group",
                                     "remote" } ), required = true ) @PathParam( "type" ) String type,
                     final @Parameter( in = PATH, required = true ) @PathParam( "name" ) String name,
-                    final @Parameter( in = PATH, required = true ) @PathParam( "path" ) String path,
                     final @QueryParam( "recursive" ) boolean recursive, final @QueryParam( "type" ) String fileType,
                     final @QueryParam( "limit" ) int limit )
     {
-        logger.info( "List, packageType:{}, type:{}, name:{}, path:{}, recursive:{}", packageType, type, name, path,
-                      recursive );
+        logger.info( "List, packageType:{}, type:{}, name:{}, recursive:{}", packageType, type, name, recursive );
         PathMappedListResult result = controller.list( packageType, type, name, ROOT_DIR, recursive, fileType, limit );
         return responseHelper.formatOkResponseWithJsonEntity( result );
     }
