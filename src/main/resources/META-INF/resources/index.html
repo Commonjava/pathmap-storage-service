@@ -19,7 +19,7 @@
         function _refreshPageData() {
           $http({
             method: 'GET',
-            url: '/info'
+            url: '/api/stats/version-info'
           }).then(function successCallback(response) {
             $scope.stats = response.data;
           }, function errorCallback(response) {
@@ -51,7 +51,7 @@
     <div style="position: fixed; bottom: 5%; text-align: center;">
         <a target="_new" href="https://github.com/Commonjava/pathmap-storage-service">Github Project</a></span> |
         Version: {{ stats.version }} |
-        Commit ID: <a target="_new" href="http://github.com/commonjava/pathmap-storage-service/commit/{{stats['commit-id']}}">{{ stats["commit.id"] }}</a> |
+        Commit ID: <a target="_new" href="http://github.com/Commonjava/pathmap-storage-service/commit/{{stats['commit-id']}}">{{ stats["commit-id"] }}</a> |
         Built on {{ stats["timestamp"] }} by {{ stats["builder"] }}
     </div>
 
