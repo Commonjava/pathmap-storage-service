@@ -1,5 +1,6 @@
 package org.commonjava.service.storage.event;
 
+import org.commonjava.event.file.FileEvent;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 

@@ -5,8 +5,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.smallrye.reactive.messaging.connectors.InMemoryConnector;
 import io.smallrye.reactive.messaging.connectors.InMemorySink;
 import io.smallrye.reactive.messaging.connectors.InMemorySource;
-import org.commonjava.service.storage.event.FileEvent;
-import org.junit.jupiter.api.Assertions;
+import org.commonjava.event.file.FileEvent;
 import org.junit.jupiter.api.Test;
 
 import javax.enterprise.inject.Any;
