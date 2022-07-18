@@ -14,6 +14,6 @@ public class FileEventConsumer
 
     @Incoming("file-event-in")
     public void receive( FileEvent event) {
-        logger.info("Got an event: {}", event.getTrackingID());
+        //logger.info("Got an event: {}", event.getTrackingID());
     }
 }
