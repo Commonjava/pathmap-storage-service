@@ -27,11 +27,10 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <path-mapped-storage.version>1.9-SNAPSHOT</path-mapped-storage.version>
+        <path-mapped-storage.version>2.2-SNAPSHOT</path-mapped-storage.version>
         <toolchains-plugin.version>3.0.0</toolchains-plugin.version>
         <cassandra-maven-plugin.version>3.6</cassandra-maven-plugin.version>
         <cassandra-unit.version>3.7.1.0</cassandra-unit.version>
-        <o11phant.version>1.3-SNAPSHOT</o11phant.version>
         <indy-event.version>1.0-SNAPSHOT</indy-event.version>
     </properties>
 
@@ -80,11 +79,6 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.commonjava.util</groupId>
-            <artifactId>o11yphant-honeycomb-api</artifactId>
-            <version>${o11phant.version}</version>
         </dependency>
 
         <!-- Path-mapped storage -->

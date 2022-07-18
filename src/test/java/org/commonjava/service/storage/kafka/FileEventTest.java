@@ -25,7 +25,7 @@ public class FileEventTest
         InMemorySource<FileEvent> events = connector.source( "file-event-in");
 
         FileEvent fileEvent = new FileEvent();
-        fileEvent.setTrackingID( "build-0001" );
+        //fileEvent.setTrackingID( "build-0001" );
 
         // Use the send method to send a mock message to the events channel. So, our application will process this message.
         events.send(fileEvent);
