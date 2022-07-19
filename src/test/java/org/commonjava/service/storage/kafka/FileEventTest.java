@@ -6,16 +6,17 @@ import io.smallrye.reactive.messaging.connectors.InMemoryConnector;
 import io.smallrye.reactive.messaging.connectors.InMemorySink;
 import io.smallrye.reactive.messaging.connectors.InMemorySource;
 import org.commonjava.event.file.FileEvent;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 
 import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 
+@Ignore
 @QuarkusTest
 @QuarkusTestResource(KafkaTestResourceLifecycleManager.class)
 public class FileEventTest
 {
-
     @Inject @Any
     InMemoryConnector connector;
 
@@ -25,7 +26,6 @@ public class FileEventTest
         InMemorySource<FileEvent> events = connector.source( "file-event-in");
 
         FileEvent fileEvent = new FileEvent();
-        //fileEvent.setTrackingID( "build-0001" );
 
         // Use the send method to send a mock message to the events channel. So, our application will process this message.
         events.send(fileEvent);
@@ -43,7 +43,6 @@ public class FileEventTest
 
         // TODO trigger the application to send the message
 
-        // TODO
         // Assertions.assertEquals( 1, queue.received().size() );
         // FileEvent event = queue.received().get(0).getPayload();
 

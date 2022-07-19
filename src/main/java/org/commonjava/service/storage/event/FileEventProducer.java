@@ -10,7 +10,6 @@ import javax.inject.Inject;
 @ApplicationScoped
 public class FileEventProducer
 {
-
     @Inject
     @Channel("file-event-out")
     Emitter<FileEvent> emitter;

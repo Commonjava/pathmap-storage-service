@@ -1,7 +1,7 @@
 package org.commonjava.service.storage.core;
 
-import org.commonjava.service.storage.config.CassandraConfiguration;
-import org.commonjava.service.storage.config.IndyPathMappedConfiguration;
+import org.commonjava.service.storage.config.CassandraConfig;
+import org.commonjava.service.storage.config.StorageServiceConfig;
 import org.commonjava.storage.pathmapped.config.DefaultPathMappedStorageConfig;
 import org.commonjava.storage.pathmapped.config.PathMappedStorageConfig;
 import org.commonjava.storage.pathmapped.core.FileBasedPhysicalStore;
@@ -17,36 +17,31 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.commonjava.storage.pathmapped.pathdb.datastax.util.CassandraPathDBUtils.PROP_CASSANDRA_HOST;
-import static org.commonjava.storage.pathmapped.pathdb.datastax.util.CassandraPathDBUtils.PROP_CASSANDRA_KEYSPACE;
-import static org.commonjava.storage.pathmapped.pathdb.datastax.util.CassandraPathDBUtils.PROP_CASSANDRA_PASS;
-import static org.commonjava.storage.pathmapped.pathdb.datastax.util.CassandraPathDBUtils.PROP_CASSANDRA_PORT;
-import static org.commonjava.storage.pathmapped.pathdb.datastax.util.CassandraPathDBUtils.PROP_CASSANDRA_USER;
+import static org.commonjava.storage.pathmapped.pathdb.datastax.util.CassandraPathDBUtils.*;
 
 @ApplicationScoped
 public class FileManagerProducer
 {
+    @Inject
+    CassandraConfig cassandraConfig;
 
     @Inject
-    CassandraConfiguration cassandraConfig;
-
-    @Inject
-    IndyPathMappedConfiguration storageConfig;
+    StorageServiceConfig storageConfig;
 
     @Produces
     public PathMappedFileManager getFileManager()
     {
 
         Map<String, Object> props = new HashMap<>();
-        props.put( PROP_CASSANDRA_HOST, cassandraConfig.getCassandraHost() );
-        props.put( PROP_CASSANDRA_PORT, cassandraConfig.getCassandraPort() );
-        props.put( PROP_CASSANDRA_KEYSPACE, cassandraConfig.getKeyspace() );
-        props.put( PROP_CASSANDRA_USER, cassandraConfig.getCassandraUser() );
-        props.put( PROP_CASSANDRA_PASS, cassandraConfig.getCassandraPass() );
+        props.put( PROP_CASSANDRA_HOST, cassandraConfig.host() );
+        props.put( PROP_CASSANDRA_PORT, cassandraConfig.port() );
+        props.put( PROP_CASSANDRA_KEYSPACE, cassandraConfig.keyspace() );
+        props.put( PROP_CASSANDRA_USER, cassandraConfig.user() );
+        props.put( PROP_CASSANDRA_PASS, cassandraConfig.pass() );
 
         PathMappedStorageConfig config = new DefaultPathMappedStorageConfig( props );
 
-        File baseDir = storageConfig.getStorageRootDirectory();
+        File baseDir = storageConfig.baseDir();
 
         PathDB pathDB = new CassandraPathDB( config );
 

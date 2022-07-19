@@ -1,17 +1,16 @@
-package org.commonjava.service.storage.jaxrs;
+package org.commonjava.service.storage.dto;
 
 import java.util.Set;
 
-public class PathMappedCleanupResult
+public class BatchCleanupResult
 {
-
     private String path;
 
     private Set<String> success;
 
     private Set<String> failures;
 
-    public PathMappedCleanupResult( String path )
+    public BatchCleanupResult(String path )
     {
         this.path = path;
     }
@@ -46,10 +45,4 @@ public class PathMappedCleanupResult
         this.failures = failures;
     }
 
-    @Override
-    public String toString()
-    {
-        return "PathMappedCleanupResult{" + "path='" + path + '\'' + ", success=" + success + ", failures=" + failures
-                        + '}';
-    }
 }
