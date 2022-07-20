@@ -1,6 +1,6 @@
 package org.commonjava.service.storage.stats;
 
-import org.commonjava.service.storage.jaxrs.ResponseHelper;
+import org.commonjava.service.storage.util.ResponseHelper;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +20,10 @@ public class StatsHandler
     private final Logger logger = LoggerFactory.getLogger( getClass() );
 
     @Inject
-    private Versioning versioning;
+    Versioning versioning;
 
     @Inject
-    private ResponseHelper responseHelper;
+    ResponseHelper responseHelper;
 
     @Operation( summary = "Retrieve versioning information about this APP instance" )
     @Path( "/version-info" )

@@ -1,4 +1,4 @@
-package org.commonjava.service.storage.jaxrs;
+package org.commonjava.service.storage.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -22,15 +22,10 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 @ApplicationScoped
 public class ResponseHelper
 {
-
     private final static Logger LOGGER = LoggerFactory.getLogger( ResponseHelper.class );
 
     @Inject
     private ObjectMapper mapper;
-
-    //TODO: will think about metrics later
-    //    @Inject
-    //    private DefaultMetricsManager metricsManager;
 
     public Response formatRedirect( final URI uri )
     {
@@ -140,12 +135,6 @@ public class ResponseHelper
             code = Status.fromStatusCode( statusCode );
             LOGGER.debug( "got error code from parameter: {}", code );
         }
-        /*else if ( ( error instanceof IndyWorkflowException) && ( (IndyWorkflowException) error ).getStatus() > 0 )
-        {
-            final int sc = ( (IndyWorkflowException) error ).getStatus();
-            LOGGER.debug( "got error code from exception: {}", sc );
-            code = Response.Status.fromStatusCode( sc );
-        }*/
 
         // if this is a server error, let's promote the log level. Otherwise, keep it in the background.
         if ( code.getStatusCode() > 499 )
@@ -156,9 +145,6 @@ public class ResponseHelper
         {
             LOGGER.debug( "Sending response: {} {}\n{}", code.getStatusCode(), code.getReasonPhrase(), msg );
         }
-
-        //TODO: this is used for mdc tracking, think about this later
-        //        setContext( HTTP_STATUS, String.valueOf( code.getStatusCode() ) );
 
         Response.ResponseBuilder builder = Response.status( code ).type( MediaType.TEXT_PLAIN ).entity( msg );
 
@@ -180,8 +166,6 @@ public class ResponseHelper
     public String generateErrorId()
     {
         return DigestUtils.sha256Hex( Thread.currentThread().getName() );
-
-        //+ "@" + new SimpleDateFormat( "yyyy-MM-ddThhmmss.nnnZ" ).format( new Date() );
     }
 
     public CharSequence formatEntity( final Throwable error )

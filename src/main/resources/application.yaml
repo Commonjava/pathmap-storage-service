@@ -30,25 +30,25 @@ quarkus:
     swagger-ui:
         always-include: true
 
-honeycomb:
-    enabled: false
-    dataset: test
-    write-key: 61c935e7d6f5ef5b992fe142deb2569c
-    base-sample-rate: 50
+#honeycomb:
+#    enabled: false
+#    dataset: test
+#    write-key: 61c935e7d6f5ef5b992fe142deb2569c
+#    base-sample-rate: 50
 
 cassandra:
     host: localhost
     port: 9042
-    keyspace: indystorage
     user: cassandra
     pass: cassandra
+    keyspace: indystorage
 
 storage:
-    dir: "/opt/indy/var/lib/indy/storage/storage"
+    baseDir: "/opt/indy/var/lib/indy/storage/storage"
 
-kafka:
-    bootstrap:
-        servers: "localhost:9092"
+#kafka:
+#    bootstrap:
+#        servers: "localhost:9092"
 
 
 "%dev":
@@ -76,24 +76,25 @@ kafka:
         port: 9042
         user: cassandra
         pass: cassandra
+        keyspace: indystorage
 
-    kafka:
-        bootstrap:
-            servers: "localhost:9092"
-
-    # Configuring the incoming/outgoing channel
-    mp:
-        messaging:
-            outgoing:
-                file-event-out:
-                    connector: smallrye-kafka
-                    topic: file-event
-                    value:
-                        serializer: io.quarkus.kafka.client.serialization.ObjectMapperSerializer
-            incoming:
-                file-event-in:
-                    connector: smallrye-kafka
-                    topic: file-event
-                    value:
-                        deserializer: org.commonjava.service.storage.event.FileEventDeserializer
+#    kafka:
+#        bootstrap:
+#            servers: "localhost:9092"
+#
+#    # Configuring the incoming/outgoing channel
+#    mp:
+#        messaging:
+#            outgoing:
+#                file-event-out:
+#                    connector: smallrye-kafka
+#                    topic: file-event
+#                    value:
+#                        serializer: io.quarkus.kafka.client.serialization.ObjectMapperSerializer
+#            incoming:
+#                file-event-in:
+#                    connector: smallrye-kafka
+#                    topic: file-event
+#                    value:
+#                        deserializer: org.commonjava.service.storage.event.FileEventDeserializer
 

@@ -33,11 +33,13 @@ quarkus:
 cassandra:
     host: localhost
     port: 9142
+    user: cassandra
+    pass: cassandra
     keyspace: indystorage
 
 storage:
-    dir: "/tmp"
+    baseDir: "/tmp"
 
-kafka:
-    bootstrap:
-        servers: "localhost:9092"
+#kafka:
+#    bootstrap:
+#        servers: "localhost:9092"
