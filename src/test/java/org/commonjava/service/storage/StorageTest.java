@@ -42,10 +42,20 @@ public abstract class StorageTest
     @BeforeEach
     public void start() throws Exception
     {
-        try (InputStream in = url.openStream();
-             OutputStream out = fileManager.openOutputStream( filesystem, PATH) )
-        {
-            IOUtils.copy( in, out );
+        if ( isPrepareFile() ) {
+            try (InputStream in = url.openStream();
+                 OutputStream out = fileManager.openOutputStream(filesystem, PATH)) {
+                IOUtils.copy(in, out);
+            }
         }
+    }
+
+    /**
+     * Override this if your test case don't need to prepare the PATH
+     * @return
+     */
+    protected boolean isPrepareFile()
+    {
+        return true;
     }
 }
