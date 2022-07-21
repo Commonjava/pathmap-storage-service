@@ -5,6 +5,7 @@ import org.apache.commons.io.IOUtils;
 import org.commonjava.service.storage.dto.BatchCleanupResult;
 import org.commonjava.service.storage.dto.FileInfoObj;
 import org.commonjava.storage.pathmapped.core.PathMappedFileManager;
+import org.commonjava.storage.pathmapped.model.PathMap;
 import org.commonjava.storage.pathmapped.spi.PathDB;
 import org.commonjava.storage.pathmapped.spi.PathDB.FileType;
 import org.slf4j.Logger;
@@ -110,14 +111,16 @@ public class StorageController
 
     public FileInfoObj getFileInfo(String filesystem, String path )
     {
-        String storagePath = fileManager.getFileStoragePath( filesystem, path );
-        long fileLength = fileManager.getFileLength( filesystem, path );
-
-        FileInfoObj result = new FileInfoObj( filesystem, path );
-        result.setStoragePath( storagePath );
-        result.setFileLength( fileLength );
-
-        return result;
+        PathMap pm = fileManager.getPathMap( filesystem, path );
+        if ( pm != null ) {
+            FileInfoObj result = new FileInfoObj(filesystem, path);
+            result.setStoragePath(pm.getFileStorage());
+            result.setFileLength(pm.getSize());
+            result.setLastModified(pm.getCreation());
+            result.setExpiration(pm.getExpiration());
+            return result;
+        }
+        return null;
     }
 
     public BatchCleanupResult cleanup(String path, Set<String> filesystems )

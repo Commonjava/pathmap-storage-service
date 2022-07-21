@@ -1,6 +1,8 @@
 package org.commonjava.service.storage.dto;
 
 
+import java.util.Date;
+
 public class FileInfoObj
 {
     private String filesystem;
@@ -10,6 +12,10 @@ public class FileInfoObj
     private String storagePath;
 
     private Long fileLength;
+
+    private Date lastModified;
+
+    private Date expiration;
 
     public FileInfoObj(String filesystem, String path )
     {
@@ -55,4 +61,19 @@ public class FileInfoObj
         this.fileLength = fileLength;
     }
 
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    public Date getExpiration() {
+        return expiration;
+    }
+
+    public void setExpiration(Date expiration) {
+        this.expiration = expiration;
+    }
 }

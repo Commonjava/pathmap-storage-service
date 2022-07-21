@@ -13,7 +13,6 @@ import org.commonjava.storage.pathmapped.spi.PhysicalStore;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +30,6 @@ public class FileManagerProducer
     @Produces
     public PathMappedFileManager getFileManager()
     {
-
         Map<String, Object> props = new HashMap<>();
         props.put( PROP_CASSANDRA_HOST, cassandraConfig.host() );
         props.put( PROP_CASSANDRA_PORT, cassandraConfig.port() );
@@ -41,14 +39,10 @@ public class FileManagerProducer
 
         PathMappedStorageConfig config = new DefaultPathMappedStorageConfig( props );
 
-        File baseDir = storageConfig.baseDir();
-
         PathDB pathDB = new CassandraPathDB( config );
-
-        PhysicalStore physicalStore = new FileBasedPhysicalStore( baseDir );
+        PhysicalStore physicalStore = new FileBasedPhysicalStore( storageConfig.baseDir() );
 
         PathMappedFileManager fileManager = new PathMappedFileManager( config, pathDB, physicalStore );
-
         return fileManager;
     }
 
