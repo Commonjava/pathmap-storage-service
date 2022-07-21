@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
 public class StorageControllerTest extends StorageTest
@@ -24,9 +24,11 @@ public class StorageControllerTest extends StorageTest
     @Test
     public void testGetFileInfo() throws Exception
     {
-        FileInfoObj result = controller.getFileInfo( filesystem, PATH);
-        Assertions.assertNotNull( result.getStoragePath() );
-        Assertions.assertNotEquals( -1, result.getFileLength() );
+        FileInfoObj result = controller.getFileInfo( filesystem, PATH );
+        assertNotNull( result.getStoragePath() );
+        assertNotNull( result.getLastModified() );
+        assertNull( result.getExpiration() );
+        assertNotEquals( -1, result.getFileLength() );
     }
 
     @Test
@@ -47,17 +49,17 @@ public class StorageControllerTest extends StorageTest
     public void testCleanup()
     {
         // Before cleanup
-        FileInfoObj result = controller.getFileInfo( filesystem, PATH);
-        Assertions.assertNotEquals( -1, result.getFileLength() );
+        FileInfoObj result = controller.getFileInfo( filesystem, PATH );
+        assertNotEquals( -1, result.getFileLength() );
 
         Set<String> repos = new HashSet<>();
         repos.add( filesystem );
-        BatchCleanupResult cleanupResult = controller.cleanup(PATH, repos );
+        BatchCleanupResult cleanupResult = controller.cleanup( PATH, repos );
         assertEquals( filesystem, String.join( ",", cleanupResult.getSuccess() ) );
 
         // After cleanup
-        result = controller.getFileInfo( filesystem, PATH);
-        assertEquals( -1, result.getFileLength() );
+        result = controller.getFileInfo( filesystem, PATH );
+        assertNull( result );
     }
 
 }
