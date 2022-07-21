@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
+import static org.apache.kafka.common.utils.Utils.sleep;
 import static org.commonjava.service.storage.jaxrs.StorageResource.API_BASE;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,6 +28,38 @@ public class StorageResourceTest
                .get( API_BASE + "/content/{filesystem}/{path}" )
                .then()
                .statusCode( 200 );
+    }
+
+    @Test
+    public void testPutFile()
+    {
+        given().pathParam( "filesystem", filesystem )
+                .pathParam( "path", PATH)
+                .when()
+                .put( API_BASE + "/content/{filesystem}/{path}" )
+                .then()
+                .statusCode( 200 );
+    }
+
+    @Test
+    public void testPutFileWithTimeout()
+    {
+        given().pathParam( "filesystem", filesystem )
+                .pathParam( "path", PATH)
+                .queryParam( "timeout", "1s" )
+                .when()
+                .put( API_BASE + "/content/{filesystem}/{path}" )
+                .then()
+                .statusCode( 200 );
+
+        sleep(3000);
+
+        given().pathParam( "filesystem", filesystem )
+                .pathParam( "path", PATH)
+                .when()
+                .get( API_BASE + "/content/{filesystem}/{path}" )
+                .then()
+                .statusCode( 404 );
     }
 
     @Test
