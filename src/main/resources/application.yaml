@@ -44,12 +44,12 @@ cassandra:
     keyspace: indystorage
 
 storage:
-    baseDir: "/opt/indy/var/lib/indy/storage/storage"
+    baseDir: "/tmp"
+    readonly: false
 
 #kafka:
 #    bootstrap:
 #        servers: "localhost:9092"
-
 
 "%dev":
     quarkus:

@@ -39,6 +39,7 @@ cassandra:
 
 storage:
     baseDir: "/tmp"
+    readonly: false
 
 #kafka:
 #    bootstrap:
