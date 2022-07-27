@@ -59,9 +59,9 @@ By clicking http://localhost:8080/swagger-ui/
 
 ### 5. Open another terminal, upload a file, download it, and list a directory.
 ```
-$ echo "test $(date)" | curl -X PUT -d @- http://localhost:8080/api/content/myfiles/foo/bar.txt
-$ curl http://localhost:8080/api/content/myfiles/foo/bar.txt
-$ curl http://localhost:8080/api/browse/myfiles/foo
+$ echo "test $(date)" | curl -X PUT -d @- http://localhost:8080/api/storage/content/myfiles/foo/bar.txt
+$ curl http://localhost:8080/api/storage/content/myfiles/foo/bar.txt
+$ curl http://localhost:8080/api/storage/browse/myfiles/foo
 ```
 
 ## Scale up

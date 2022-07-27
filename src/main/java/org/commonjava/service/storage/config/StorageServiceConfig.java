@@ -29,4 +29,7 @@ public interface StorageServiceConfig
 {
     @WithName( "baseDir" )
     File baseDir();
+
+    @WithName( "readonly" )
+    boolean readonly();
 }
