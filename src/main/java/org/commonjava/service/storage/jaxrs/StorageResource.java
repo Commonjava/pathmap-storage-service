@@ -12,6 +12,8 @@ import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.eclipse.microprofile.openapi.annotations.enums.ParameterIn.PATH;
 
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -28,8 +30,11 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.commonjava.storage.pathmapped.util.PathMapUtils.ROOT_DIR;
@@ -52,7 +57,7 @@ public class StorageResource
     @Operation( description = "Write a file" )
     @APIResponse( responseCode = "201", description = "The file was created" )
     @PUT
-    @Path( "/content/{filesystem}/{path: (.*)}" )
+    @Path( "content/{filesystem}/{path: (.*)}" )
     public Response put(final @PathParam( "filesystem" ) String filesystem,
                         final @PathParam( "path" ) String path,
                         final @QueryParam( "timeout" ) String timeout,
@@ -78,7 +83,7 @@ public class StorageResource
     @APIResponse( responseCode = "200", description = "The file content" )
     @APIResponse( responseCode = "404", description = "The file doesn't exist" )
     @GET
-    @Path( "/content/{filesystem}/{path: (.*)}" )
+    @Path( "content/{filesystem}/{path: (.*)}" )
     public Response get( final @PathParam( "filesystem" ) String filesystem,
                          final @PathParam( "path" ) String path )
     {
@@ -104,7 +109,7 @@ public class StorageResource
     @Operation( summary = "Delete a file." )
     @APIResponses( { @APIResponse ( responseCode = "200", description = "The file is removed.") })
     @DELETE
-    @Path( "/content/{filesystem}/{path: (.*)}" )
+    @Path( "content/{filesystem}/{path: (.*)}" )
     public Response delete(
             final @Parameter( in = PATH, required = true ) @PathParam( "filesystem" ) String filesystem,
             final @Parameter( in = PATH, required = true ) @PathParam( "path" ) String path,
@@ -120,7 +125,7 @@ public class StorageResource
     @APIResponse( responseCode = "404", description = "The dir doesn't exist" )
     @GET
     @Produces( APPLICATION_JSON )
-    @Path( "/browse/{path: (.*)}" )
+    @Path( "browse{path: (.*)}" )
     public Response list( final @PathParam( "path" ) String rawPath,
                           final @QueryParam( "recursive" ) boolean recursive,
                           final @QueryParam( "filetype" ) String fileType,
@@ -128,9 +133,14 @@ public class StorageResource
     {
         logger.info( "List [{}]", rawPath );
         Response response;
+        if ( isBlank(rawPath) )
+        {
+            List<String> result = controller.getFilesystems().stream().map(s -> s + "/").collect(Collectors.toList());
+            return Response.ok( result ).build();
+        }
         try
         {
-            String[] tokens = rawPath.split("/", 2 ); // separate filesystem and path
+            String[] tokens = rawPath.substring(1).split("/", 2 ); // trim the leading /, then separate filesystem and path
             String filesystem = tokens[0];
             String path;
             if ( tokens.length >= 2 )
@@ -141,6 +151,7 @@ public class StorageResource
             {
                 path = ROOT_DIR;
             }
+            logger.debug( "List filesystem: {}, path: {}", filesystem, path );
             String[] ret = controller.list(filesystem, path, recursive, fileType, limit);
             if ( ret == null )
             {
@@ -165,7 +176,7 @@ public class StorageResource
                     description = "The detailed info of the file." ) } )
     @Produces( APPLICATION_JSON )
     @GET
-    @Path( "/info/{filesystem}/{path: (.*)}" )
+    @Path( "info/{filesystem}/{path: (.*)}" )
     public Response getFileInfo(
                     final @Parameter( in = PATH, required = true ) @PathParam( "filesystem" ) String filesystem,
                     final @Parameter( in = PATH, required = true ) @PathParam( "path" ) String path,
@@ -183,7 +194,7 @@ public class StorageResource
     @Consumes( APPLICATION_JSON )
     @Produces( APPLICATION_JSON )
     @GET
-    @Path( "/filesystem/containing/{path: (.+)}" )
+    @Path( "filesystem/containing/{path: (.+)}" )
     public Response getFilesystemContaining( final @PathParam( "path" ) String path, final Collection<String> candidates )
     {
         logger.info( "Get filesystems containing path: {}, candidates: {}", path, candidates );
@@ -210,7 +221,7 @@ public class StorageResource
     @Consumes( APPLICATION_JSON )
     @Produces( APPLICATION_JSON )
     @POST
-    @Path( "/filesystem/cleanup" )
+    @Path( "filesystem/cleanup" )
     public Response cleanup( final BatchCleanupRequest request )
     {
         logger.info( "Batch cleanup: {}", request );
@@ -218,6 +229,19 @@ public class StorageResource
 
         logger.debug( "Batch cleanup result: {}", result );
         return responseHelper.formatOkResponseWithJsonEntity( result );
+    }
+
+    @Operation( summary = "Get all filesystems." )
+    @APIResponses( { @APIResponse( responseCode = "200", description = "The filesystems." ) } )
+    @Produces( APPLICATION_JSON )
+    @GET
+    @Path( "filesystems" )
+    public Response filesystems()
+    {
+        logger.info( "List filesystems" );
+        Collection<String> result = controller.getFilesystems();
+        logger.debug( "List filesystems, result: {}", result );
+        return Response.ok( result ).build();
     }
 
 }

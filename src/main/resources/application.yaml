@@ -56,8 +56,7 @@ storage:
         kubernetes-config:
             enabled: false
         log:
-            level: TRACE
-            min-level: TRACE
+            level: INFO
             category:
                 "org.commonjava.service.storage":
                     level: TRACE
