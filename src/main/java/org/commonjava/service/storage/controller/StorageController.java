@@ -5,6 +5,7 @@ import org.apache.commons.io.IOUtils;
 import org.commonjava.service.storage.dto.BatchCleanupResult;
 import org.commonjava.service.storage.dto.FileInfoObj;
 import org.commonjava.storage.pathmapped.core.PathMappedFileManager;
+import org.commonjava.storage.pathmapped.model.Filesystem;
 import org.commonjava.storage.pathmapped.model.PathMap;
 import org.commonjava.storage.pathmapped.spi.PathDB;
 import org.commonjava.storage.pathmapped.spi.PathDB.FileType;
@@ -17,13 +18,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Duration;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.commonjava.service.storage.util.Utils.getDuration;
+import static org.commonjava.service.storage.util.Utils.sort;
 
 @ApplicationScoped
 public class StorageController
@@ -78,7 +80,7 @@ public class StorageController
         {
             list = fileManager.list( fileSystem, path, fType );
         }
-        return list;
+        return sort(list);
     }
 
     /**
@@ -142,5 +144,14 @@ public class StorageController
         result.setSuccess( success );
         result.setFailures( failures );
         return result;
+    }
+
+    public Collection<String> getFilesystems()
+    {
+        Collection<? extends Filesystem> filesystems = fileManager.getFilesystems();
+        if ( filesystems != null ) {
+            return filesystems.stream().map(filesystem -> filesystem.getFilesystem()).collect(Collectors.toList());
+        }
+        return emptyList();
     }
 }

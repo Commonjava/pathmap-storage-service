@@ -1,6 +1,10 @@
 package org.commonjava.service.storage.util;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Utils {
     public static Duration getDuration( String timeout )
@@ -28,5 +32,17 @@ public class Utils {
         }
         Duration d = Duration.parse(timeout);
         return d;
+    }
+
+    /**
+     * @param list strings to sort out
+     */
+    public static String[] sort(String[] list) {
+        List<String> ret = new LinkedList<>();
+        for (int i = 0; i < list.length; i++) {
+            ret.add( list[i] );
+        }
+        Collections.sort(ret);
+        return ret.toArray(new String[0]);
     }
 }

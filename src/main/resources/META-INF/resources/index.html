@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <title>Pathmap Storage Service</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/wingcss/0.1.8/wing.min.css"/>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
     <script type="text/javascript">
       var app = angular.module("Pathmap", []);
 
@@ -32,24 +32,35 @@
 <body ng-app="Pathmap" ng-controller="PathmapController">
 
 <div class="container">
-    <h1>Pathmap</h1>
+    <h1>Pathmap Storage</h1>
     <hr/>
-
 
     <div class="cards">
         <div class="card">
             <h5 class="card-header">About</h5>
-            <p class="card-body"><b>Pathmap Storage Service</b> provides both REST endpoints and Kafka topics to manage file content.</p>
+            <p class="card-body"><b>Pathmap Storage Service</b> provides REST endpoints to put, get, and list files.
+            It has advanced features like</p>
+            <ul>
+                <li><b>Cluster</b> - Easily deployed as a cluster on cloud platforms, e.g., k8s or Openshift.</li>
+                <li><b>De-duplication</b> - When more than one files had same content but were stored at different paths,
+                    all those files share one distinct physical file.</li>
+                <li><b>Concurrency and data consistency</b> - Always render the latest and complete file content even if the file were
+                    being changed or deleted by other concurrent users.</li>
+            </ul>
+            <p>You can visit our <a target="_new" href="https://github.com/Commonjava/pathmap-storage-service">Github project</a> for complete document.</p>
         </div>
 
         <div class="card">
-            <h5 class="card-header">Configuration</h5>
-            <p class="card-body">Click <a target="_new" href="config">HERE</a> to see the <b>configuration</b>.</p>
+            <h5 class="card-header">File systems</h5>
+            <p class="card-body">
+                Files are stored into filesystems. <button onclick="window.open('browse')">Browse File Systems</button>
+            </p>
         </div>
     </div>
 
     <div style="position: fixed; bottom: 5%; text-align: center;">
-        <a target="_new" href="https://github.com/Commonjava/pathmap-storage-service">Github Project</a></span> |
+        <hr/>
+        <a target="_new" href="https://github.com/Commonjava/pathmap-storage-service">Github Project</a> |
         Version: {{ stats.version }} |
         Commit ID: <a target="_new" href="http://github.com/Commonjava/pathmap-storage-service/commit/{{stats['commit-id']}}">{{ stats["commit-id"] }}</a> |
         Built on {{ stats["timestamp"] }} by {{ stats["builder"] }}

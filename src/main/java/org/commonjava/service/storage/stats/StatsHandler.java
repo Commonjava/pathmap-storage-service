@@ -26,7 +26,7 @@ public class StatsHandler
     ResponseHelper responseHelper;
 
     @Operation( summary = "Retrieve versioning information about this APP instance" )
-    @Path( "/version-info" )
+    @Path( "version-info" )
     @GET
     @Produces( APPLICATION_JSON )
     public Response getAppVersion()

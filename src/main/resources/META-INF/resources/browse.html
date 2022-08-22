@@ -1,0 +1,29 @@
+<!doctype html>
+<html  ng-app="Browse" ng-controller="BrowseController">
+<head>
+    <meta charset="utf-8"/>
+    <title>Directory listing for {{ listPath }}</title>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+    <script src="js/browseApp.js"></script>
+</head>
+<body>
+
+<h2>Directory listing for {{ listPath }}</h2>
+
+<ul style="list-style-type:none;">
+    <li>
+        <a href="" ng-click="refreshPageData( parentPath )">..</a>
+    </li>
+    <li ng-repeat="x in dirs">
+        <a href="" ng-click="refreshPageData( listPath + x )">{{ x }}</a>
+    </li>
+    <li ng-repeat="x in files">
+        <a href="/api/storage/content{{listPath + x}}" download="{{ x }}">{{ x }}</a>
+    </li>
+</ul>
+
+<hr/>
+
+</body>
+</html>
