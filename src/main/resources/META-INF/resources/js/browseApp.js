@@ -17,7 +17,7 @@ app.controller("BrowseController", function ($scope, $location, $http) {
       return parentPath;
     }
 
-    function downloadFile( url ) {
+    /*function downloadFile( url ) {
         const link = document.createElement('a');
         link.setAttribute('target', '_blank');
         link.setAttribute('href', url);
@@ -25,6 +25,19 @@ app.controller("BrowseController", function ($scope, $location, $http) {
         document.body.appendChild(link);
         link.click();
         link.remove();
+    }*/
+
+    function setDirsAndFiles( data ) {
+        $scope.dirs = []
+        $scope.files = []
+        for(let i = 0; i < data.length; i++) {
+          item = data[i]
+          if ( item.endsWith("/") ) {
+            $scope.dirs.push( item );
+          } else {
+            $scope.files.push( item );
+          }
+        }
     }
 
     $scope.onLocationChange = function() {
@@ -48,14 +61,13 @@ app.controller("BrowseController", function ($scope, $location, $http) {
           method: 'GET',
           url: '/api/storage/browse' + p
         }).then(function successCallback(response) {
-          $scope.items = response.data;
+          setDirsAndFiles( response.data );
         }, function errorCallback(response) {
           console.log(response.statusText);
         });
-      } else {
-        //console.log("download: " + p);
+      }/* else {
         downloadFile( "/api/storage/content" + p );
-      }
+      }*/
     }
 
     $scope.$on('$locationChangeSuccess', function(event) {

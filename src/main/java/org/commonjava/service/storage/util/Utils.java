@@ -35,25 +35,14 @@ public class Utils {
     }
 
     /**
-     * Separate dirs and files and sort them.
-     * @param list
-     * @return
+     * @param list strings to sort out
      */
     public static String[] sort(String[] list) {
-        List<String> dirs = new LinkedList<>();
-        List<String> files = new LinkedList<>();
+        List<String> ret = new LinkedList<>();
         for (int i = 0; i < list.length; i++) {
-            if (list[i].endsWith("/")) {
-                dirs.add( list[i] );
-            } else {
-                files.add( list[i] );
-            }
+            ret.add( list[i] );
         }
-        Collections.sort(dirs);
-        Collections.sort(files);
-        List<String> result = new ArrayList<>();
-        result.addAll(dirs);
-        result.addAll(files);
-        return result.toArray(new String[0]);
+        Collections.sort(ret);
+        return ret.toArray(new String[0]);
     }
 }

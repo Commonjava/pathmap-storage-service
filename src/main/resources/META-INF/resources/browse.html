@@ -15,8 +15,11 @@
     <li>
         <a href="" ng-click="refreshPageData( parentPath )">..</a>
     </li>
-    <li ng-repeat="x in items">
+    <li ng-repeat="x in dirs">
         <a href="" ng-click="refreshPageData( listPath + x )">{{ x }}</a>
+    </li>
+    <li ng-repeat="x in files">
+        <a href="/api/storage/content{{listPath + x}}" download="{{ x }}">{{ x }}</a>
     </li>
 </ul>
 
