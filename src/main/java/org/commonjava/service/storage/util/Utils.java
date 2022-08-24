@@ -1,7 +1,6 @@
 package org.commonjava.service.storage.util;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
