@@ -1,10 +1,7 @@
 var app = angular.module("Browse", ["ngRoute"]);
 
 //Controller Part
-app.controller("BrowseController", function ($scope, $location, $http) {
-    function getFilename ( path ) {
-      return path.substring( path.lastIndexOf('/') + 1 );
-    }
+app.controller("BrowseController", function ($scope, $location, $http, $cacheFactory) {
 
     function getParentPath ( path ) {
       if ( path.endsWith("/") ) {
@@ -17,17 +14,7 @@ app.controller("BrowseController", function ($scope, $location, $http) {
       return parentPath;
     }
 
-    /*function downloadFile( url ) {
-        const link = document.createElement('a');
-        link.setAttribute('target', '_blank');
-        link.setAttribute('href', url);
-        link.setAttribute('download', getFilename(url) );
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-    }*/
-
-    function setDirsAndFiles( data ) {
+    function render( data ) {
         $scope.dirs = []
         $scope.files = []
         for(let i = 0; i < data.length; i++) {
@@ -40,40 +27,37 @@ app.controller("BrowseController", function ($scope, $location, $http) {
         }
     }
 
-    $scope.onLocationChange = function() {
+    function onLocationChange() {
         path = $location.path()
+        console.log("onLocationChange, path=[" + path + "]");
         if ( path === undefined || path === "" ) {
           $scope.listPath = "/";
         } else {
           $scope.listPath = path;
         }
-        $scope.refreshPageData( $scope.listPath );
-    }
-
-    $scope.refreshPageData = function( p ) {
-      //console.log("refreshPageData, p: " + p);
-      if ( p.endsWith("/") ) {
-        $scope.listPath = p;
-        $scope.parentPath = getParentPath( p );
-        $location.path(p)
-        //console.log("listPath: " + $scope.listPath + ", parentPath: " + $scope.parentPath);
-        $http({
-          method: 'GET',
-          url: '/api/storage/browse' + p
-        }).then(function successCallback(response) {
-          setDirsAndFiles( response.data );
-        }, function errorCallback(response) {
-          console.log(response.statusText);
-        });
-      }/* else {
-        downloadFile( "/api/storage/content" + p );
-      }*/
+        p = $scope.listPath;
+        if ( p.endsWith("/") ) {
+            $scope.parentPath = getParentPath( p );
+            //console.log("listPath: " + $scope.listPath + ", parentPath: " + $scope.parentPath);
+            $http({
+              method: 'GET',
+              url: '/api/storage/browse' + p,
+              cache: true // IMPORTANT: cache the HTTP response in the default $http cache object TO avoid dup requests
+            }).then(function successCallback(response) {
+              render( response.data );
+            }, function errorCallback(response) {
+              console.log(response.statusText);
+            });
+        }
     }
 
     $scope.$on('$locationChangeSuccess', function(event) {
-      $scope.onLocationChange();
+      onLocationChange();
     });
 
-    //Now load the data from server
-    $scope.onLocationChange();
+    $scope.refreshPageData = function( p ) {
+      console.log("refreshPageData, p: " + p);
+      $location.path(p)
+    }
+
 });
