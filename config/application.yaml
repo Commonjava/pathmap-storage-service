@@ -1,0 +1,42 @@
+# Quarkus will choose application.yaml over application.properties.
+quarkus:
+    http:
+        port: 8080
+        read-timeout: 30m
+        limits:
+          max-body-size: 500M
+
+    package:
+        uber-jar: true
+
+    # Logging (disable console on prod)
+    log:
+        level: INFO
+        category:
+            "org.commonjava.service.storage":
+                level: DEBUG
+        console:
+            level: DEBUG
+            enable: true
+        file:
+            enable: true
+            path: "log/pathmap.log"
+            level: DEBUG
+            format: "%d{HH:mm:ss} %-5p [%c{2.}] (%t) %s%e%n"
+            rotation:
+                max-backup-index: 5
+                max-file-size: 10M
+
+    swagger-ui:
+        always-include: true
+
+cassandra:
+    host: cassandra
+    port: 9042
+    user: cassandra
+    pass: cassandra
+    keyspace: indystorage
+
+storage:
+    baseDir: "/tmp"
+    readonly: false
