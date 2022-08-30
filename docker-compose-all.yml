@@ -35,7 +35,7 @@ services:
       - "8080:8080"
     restart: always 
     volumes:
-      - ./config:/opt/pathmap-storage-service/config
+      - ./sample/config:/opt/pathmap-storage-service/config
     
 #  zookeeper:
 #    image: strimzi/kafka:0.19.0-kafka-2.5.0

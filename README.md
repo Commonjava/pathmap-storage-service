@@ -18,7 +18,7 @@ The concurrent r/w is no surprise when you run a standalone service which only c
 2. docker-compose 1.20+
 
 ## Configure services
-The basic configurations are storage 'baseDir' where the physical files are located, and the Cassandra connection properties. Refer to the example in `config/application.yaml`.
+The basic configurations are storage 'baseDir' where the physical files are located, and the Cassandra connection properties. Refer to sample config in `./sample/config/application.yaml`.
 
 ## Try it
 
@@ -70,7 +70,9 @@ You can run the **cluster mode** by deploying it on a cloud platform.
 
 #### 1. Deploy Cassandra
 
-First you need a Cassandra pod running. The simplest way is to create a Deployment, pick up the right image:tag with some necessary information such as labels and names, and start it up. You may also want to create a PVC and mount it to '/var/lib/cassandra' so that the data can be persistent between reboots. If you need, refer to Openshift and Cassandra docs for more details.
+First you need a Cassandra pod running. The simplest way is to create a Deployment, pick up the right image:tag with some necessary information such as labels and names, and start it up. 
+
+You may also want to create a PVC and mount it to '/var/lib/cassandra' so that the data can be persistent between reboots. If you need, refer to Openshift and Cassandra docs for more details.
 
 Then you create an Openshift 'Service' to expose the Cassandra port 9042. This port is used by storage service to connect to it. 
 
@@ -82,27 +84,27 @@ This is used to store the physical files. It can be 1G ~ 100G+ according to your
 
 2.2 Create ConfigMap 'pathmap-storage-service-config' to hold the config
 
-You may use the 'config/application.yaml' as template. First, set the **cassandra** host, user/pass to the right values. After installation, Cassandra creates a default user/pass as "cassandra". If you've done nothing special, just use the default user/pass. 
+You may use the './sample/config/application.yaml' as template. First, set the **cassandra** host, user/pass to the right values. After installation, Cassandra creates a default user/pass as "cassandra". If you've done nothing special, just use the default user/pass. 
 
 Then replace **baseDir**'s value with '/opt/pathmap-storage-service/storage' (this is where we mount the PVC). And run below command. 
 
 ```
 $ oc create configmap pathmap-storage-service-config \
-    --from-file=config/application.yaml
+    --from-file=./sample/config/application.yaml
 ```
 
 2.3 Create DeploymentConfig
 
-Open 'ocp/deploymentconfig-pathmap-storage-service.yaml' and replace the "{{ persistentVolumeClaim }}" with the PVC name you created in the first step, and run below command. This will by default start 2 pods which will work as a cluster. 
+Open './sample/ocp/deploymentconfig-pathmap-storage-service.yaml' and replace the "{{ persistentVolumeClaim }}" with the PVC name you created in the first step, and run below command. This will by default start 2 pods which would work as a cluster. 
 
 ```
-$ oc create -f ocp/deploymentconfig-pathmap-storage-service.yaml
+$ oc create -f ./sample/ocp/deploymentconfig-pathmap-storage-service.yaml
 ```
 
 2.4 Create the Ocp Service
 
 ```
-$ oc create -f ocp/service-pathmap-storage-service.yaml
+$ oc create -f ./sample/ocp/service-pathmap-storage-service.yaml
 ```
 
 2.5 Create a Route to expose the service, via Ocp UI.
