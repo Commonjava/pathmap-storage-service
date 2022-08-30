@@ -1,0 +1,16 @@
+﻿kind: Service
+apiVersion: v1
+metadata:
+  name: pathmap-storage-service
+  labels:
+    app: pathmap-storage-service
+spec:
+  ports:
+    - name: 80-tcp
+      protocol: TCP
+      port: 80
+      targetPort: 8080
+  internalTrafficPolicy: Cluster
+  type: ClusterIP
+  selector:
+    app: pathmap-storage-service

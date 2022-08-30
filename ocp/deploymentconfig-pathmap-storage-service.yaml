@@ -1,0 +1,43 @@
+﻿kind: DeploymentConfig
+apiVersion: v1
+metadata:
+  name: pathmap-storage-service
+  labels:
+    app: pathmap-storage-service
+spec:
+  replicas: 2
+  selector:
+    app: pathmap-storage-service
+    deploymentconfig: pathmap-storage-service
+  template:
+    metadata:
+      labels:
+        app: pathmap-storage-service
+        deploymentconfig: pathmap-storage-service
+    spec:
+      volumes:
+        - name: vol-pathmap-storage-service-config
+          configMap:
+            name: pathmap-storage-service-config
+            defaultMode: 420
+        - name: vol-storage
+          persistentVolumeClaim:
+            claimName: "{{ persistentVolumeClaim }}"
+      containers:
+        - name: pathmap-storage-service
+          image: 'quay.io/factory2/pathmap-storage-service:latest'
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources:
+            limits:
+              cpu: '2'
+              memory: 8000Mi
+            requests:
+              cpu: '2'
+              memory: 8000Mi
+          volumeMounts:
+            - name: vol-storage
+              mountPath: /opt/pathmap-storage-service/storage
+            - name: vol-pathmap-storage-service-config
+              mountPath: /opt/pathmap-storage-service/config

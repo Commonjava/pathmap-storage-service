@@ -30,7 +30,7 @@ services:
 
   pathmap-storage-service:
     image: quay.io/factory2/pathmap-storage-service:latest
-    container_name: pathmap-storage-service
+    container_name: storage
     ports:
       - "8080:8080"
     restart: always 
