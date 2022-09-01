@@ -40,7 +40,7 @@ Below will start standalone Pathmap storage service and its dependants.
 **NOTE**: Make sure you have Docker installed and the demon started.
 
 ```
-docker-compose up -f docker-compose-all.yml
+docker-compose -f docker-compose-all.yml up
 ```
 
 ### 4. Verify the service running
