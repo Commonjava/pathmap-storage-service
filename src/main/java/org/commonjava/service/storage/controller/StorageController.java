@@ -150,7 +150,7 @@ public class StorageController
     {
         Collection<? extends Filesystem> filesystems = fileManager.getFilesystems();
         if ( filesystems != null ) {
-            return filesystems.stream().map(filesystem -> filesystem.getFilesystem()).collect(Collectors.toList());
+            return filesystems.stream().map(filesystem -> filesystem.getFilesystem()).sorted().collect(Collectors.toList());
         }
         return emptyList();
     }
