@@ -19,7 +19,7 @@
         <a href="" ng-click="refreshPageData( listPath + x )">{{ x }}</a>
     </li>
     <li ng-repeat="x in files">
-        <a href="/api/storage/content{{listPath + x}}" download="{{ x }}">{{ x }}</a>
+        <a href="/api/storage/content{{listPath + x.encoded}}" download="{{ x.name }}">{{ x.name }}</a>
     </li>
 </ul>
 

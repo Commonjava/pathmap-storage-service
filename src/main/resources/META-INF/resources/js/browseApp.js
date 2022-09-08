@@ -22,7 +22,8 @@ app.controller("BrowseController", function ($scope, $location, $http, $cacheFac
           if ( item.endsWith("/") ) {
             $scope.dirs.push( item );
           } else {
-            $scope.files.push( item );
+            f = { "name": item, "encoded": encodeURI(item) }
+            $scope.files.push( f );
           }
         }
     }
