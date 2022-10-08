@@ -1,9 +1,7 @@
 package org.commonjava.service.storage.jaxrs;
 
 import org.commonjava.service.storage.controller.StorageController;
-import org.commonjava.service.storage.dto.BatchCleanupRequest;
-import org.commonjava.service.storage.dto.BatchCleanupResult;
-import org.commonjava.service.storage.dto.FileInfoObj;
+import org.commonjava.service.storage.dto.*;
 import org.commonjava.service.storage.util.ResponseHelper;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -184,6 +182,25 @@ public class StorageResource
     {
         FileInfoObj result = controller.getFileInfo( filesystem, path );
         logger.info( "File info: {}", result );
+        return responseHelper.formatOkResponseWithJsonEntity( result );
+    }
+
+    @Operation( summary = "Copy files." )
+    @RequestBody( description = "The file copy request", name = "body", required = true,
+            content = @Content( schema = @Schema( implementation = FileCopyRequest.class ) ) )
+    @APIResponses( { @APIResponse( responseCode = "200",
+            content = @Content( schema = @Schema( implementation = FileCopyResult.class ) ),
+            description = "The result of copying files." ) } )
+    @Consumes( APPLICATION_JSON )
+    @Produces( APPLICATION_JSON )
+    @POST
+    @Path( "copy" )
+    public Response copy( final FileCopyRequest request )
+    {
+        logger.info( "Copying: {}", request );
+        FileCopyResult result = controller.copy( request );
+
+        logger.debug( "File copy result: {}", result );
         return responseHelper.formatOkResponseWithJsonEntity( result );
     }
 

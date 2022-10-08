@@ -3,6 +3,8 @@ package org.commonjava.service.storage.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.commonjava.service.storage.dto.BatchCleanupResult;
+import org.commonjava.service.storage.dto.FileCopyRequest;
+import org.commonjava.service.storage.dto.FileCopyResult;
 import org.commonjava.service.storage.dto.FileInfoObj;
 import org.commonjava.storage.pathmapped.core.PathMappedFileManager;
 import org.commonjava.storage.pathmapped.model.Filesystem;
@@ -23,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.commonjava.service.storage.util.Utils.getDuration;
 import static org.commonjava.service.storage.util.Utils.sort;
@@ -153,5 +156,60 @@ public class StorageController
             return filesystems.stream().map(filesystem -> filesystem.getFilesystem()).sorted().collect(Collectors.toList());
         }
         return emptyList();
+    }
+
+    /**
+     * By default, the pathmap storage will override existing paths. Here we must check:
+     * 1. all paths exist in source
+     * 2. if not allow override, all paths must not exist in target
+     */
+    public FileCopyResult copy(FileCopyRequest request) {
+        if ( isBlank(request.getSourceFilesystem()) || isBlank(request.getTargetFilesystem() ) )
+        {
+            return new FileCopyResult( false, "source or target filesystem null" );
+        }
+
+        if ( request.getPaths() == null || request.getPaths().isEmpty() )
+        {
+            return new FileCopyResult( false, "paths null" );
+        }
+
+        // check paths existence
+        Set<String> missing = new HashSet<>();
+        request.getPaths().forEach( p -> {
+            boolean exist = fileManager.exists( request.getSourceFilesystem(), p );
+            if ( !exist )
+            {
+                missing.add(p);
+            }
+        });
+        if ( !missing.isEmpty() )
+        {
+            return new FileCopyResult( false, "paths missing from source: " + missing );
+        }
+
+        // if not allow override, all paths must not exist in target
+        Set<String> existing = new HashSet<>();
+        if ( !request.isAllowOverride() )
+        {
+            request.getPaths().forEach( p -> {
+                boolean exist = fileManager.exists( request.getTargetFilesystem(), p );
+                if ( exist )
+                {
+                    existing.add(p);
+                }
+            });
+        }
+        if ( !existing.isEmpty() )
+        {
+            return new FileCopyResult( false, "paths existing in target: " + existing );
+        }
+
+        // all check passes
+        request.getPaths().forEach( p -> {
+            fileManager.copy( request.getSourceFilesystem(), p, request.getTargetFilesystem(), p );
+        });
+
+        return new FileCopyResult( true );
     }
 }
