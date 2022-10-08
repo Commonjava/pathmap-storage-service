@@ -164,4 +164,46 @@ public class StorageResourceTest
                                  String.join( ",", response.jsonPath().getList( "" ) ) );
     }
 
+    @Test
+    public void testCopy()
+    {
+        JsonObject request = new JsonObject();
+        request.put( "sourceFilesystem", "maven:remote:central" );
+        request.put( "targetFilesystem", "maven:hosted:pnc-builds" );
+        request.put( "paths",
+                Arrays.asList( PATH ) );
+
+        Response response = given().contentType( ContentType.JSON )
+                .body( request.toString() )
+                .post( API_BASE + "/copy" )
+                .then()
+                .extract()
+                .response();
+
+        assertEquals( 200, response.statusCode() );
+        assertTrue( response.jsonPath().getBoolean("success") );
+    }
+
+    @Test
+    public void testCopyFileMissing()
+    {
+        JsonObject request = new JsonObject();
+        request.put( "sourceFilesystem", "maven:remote:central" );
+        request.put( "targetFilesystem", "maven:hosted:pnc-builds" );
+        request.put( "paths",
+                Arrays.asList( PATH, "a/missed/file" ) );
+
+        Response response = given().contentType( ContentType.JSON )
+                .body( request.toString() )
+                .post( API_BASE + "/copy" )
+                .then()
+                .extract()
+                .response();
+
+        assertEquals( 200, response.statusCode() );
+        assertFalse( response.jsonPath().getBoolean("success") );
+        String err = response.jsonPath().getString( "message" );
+        System.out.println(">>> " + err );
+        assertTrue( err.contains( "missing" ) );
+    }
 }
