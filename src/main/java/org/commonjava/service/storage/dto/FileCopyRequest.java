@@ -9,7 +9,7 @@ public class FileCopyRequest
     private Set<String> paths;
 
     @JsonIgnore
-    private boolean allowOverride;
+    private boolean failWhenExists;
 
     private String sourceFilesystem;
 
@@ -23,12 +23,12 @@ public class FileCopyRequest
         this.paths = paths;
     }
 
-    public boolean isAllowOverride() {
-        return allowOverride;
+    public boolean isFailWhenExists() {
+        return failWhenExists;
     }
 
-    public void setAllowOverride(boolean allowOverride) {
-        this.allowOverride = allowOverride;
+    public void setFailWhenExists(boolean failWhenExists) {
+        this.failWhenExists = failWhenExists;
     }
 
     public String getSourceFilesystem() {
