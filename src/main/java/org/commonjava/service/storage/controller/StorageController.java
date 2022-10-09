@@ -190,7 +190,7 @@ public class StorageController
 
         // if not allow override, all paths must not exist in target
         Set<String> existing = new HashSet<>();
-        if ( !request.isAllowOverride() )
+        if ( request.isFailWhenExists() )
         {
             request.getPaths().forEach( p -> {
                 boolean exist = fileManager.exists( request.getTargetFilesystem(), p );
