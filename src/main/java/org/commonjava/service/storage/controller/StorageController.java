@@ -2,10 +2,7 @@ package org.commonjava.service.storage.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
-import org.commonjava.service.storage.dto.BatchCleanupResult;
-import org.commonjava.service.storage.dto.FileCopyRequest;
-import org.commonjava.service.storage.dto.FileCopyResult;
-import org.commonjava.service.storage.dto.FileInfoObj;
+import org.commonjava.service.storage.dto.*;
 import org.commonjava.storage.pathmapped.core.PathMappedFileManager;
 import org.commonjava.storage.pathmapped.model.Filesystem;
 import org.commonjava.storage.pathmapped.model.PathMap;
@@ -149,6 +146,27 @@ public class StorageController
         return result;
     }
 
+    public BatchDeleteResult cleanup(Set<String> paths, String filesystem) {
+        Set<String> succeeded = new HashSet<>();
+        Set<String> failed = new HashSet<>();
+        for ( String p : paths )
+        {
+            if ( fileManager.delete( filesystem, p ) )
+            {
+                succeeded.add( p );
+            }
+            else
+            {
+                failed.add( p );
+            }
+        }
+        BatchDeleteResult result = new BatchDeleteResult();
+        result.setFilesystem( filesystem );
+        result.setSucceeded( succeeded );
+        result.setFailed( failed );
+        return result;
+    }
+
     public Collection<String> getFilesystems()
     {
         Collection<? extends Filesystem> filesystems = fileManager.getFilesystems();
@@ -212,4 +230,5 @@ public class StorageController
 
         return new FileCopyResult( true );
     }
+
 }

@@ -229,7 +229,7 @@ public class StorageResource
         return response;
     }
 
-    @Operation( summary = "Cleanup the files of the path in specified filesystems." )
+    @Operation( summary = "Cleanup one path in multiple filesystems." )
     @RequestBody( description = "The cleanup request", name = "body", required = true,
             content = @Content( schema = @Schema( implementation = BatchCleanupRequest.class ) ) )
     @APIResponses( { @APIResponse( responseCode = "200",
@@ -245,6 +245,25 @@ public class StorageResource
         BatchCleanupResult result = controller.cleanup( request.getPath(), request.getFilesystems() );
 
         logger.debug( "Batch cleanup result: {}", result );
+        return responseHelper.formatOkResponseWithJsonEntity( result );
+    }
+
+    @Operation( summary = "Delete multiple paths in one filesystem." )
+    @RequestBody( description = "The request", name = "body", required = true,
+            content = @Content( schema = @Schema( implementation = BatchDeleteRequest.class ) ) )
+    @APIResponses( { @APIResponse( responseCode = "200",
+            content = @Content( schema = @Schema( implementation = BatchDeleteResult.class ) ),
+            description = "The result of deleted files." ) } )
+    @Consumes( APPLICATION_JSON )
+    @Produces( APPLICATION_JSON )
+    @DELETE
+    @Path( "filesystem" )
+    public Response cleanup( final BatchDeleteRequest request )
+    {
+        logger.info( "Batch delete: {}", request );
+        BatchDeleteResult result = controller.cleanup( request.getPaths(), request.getFilesystem() );
+
+        logger.debug( "Batch delete result: {}", result );
         return responseHelper.formatOkResponseWithJsonEntity( result );
     }
 
