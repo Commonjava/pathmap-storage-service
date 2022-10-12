@@ -5,6 +5,7 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import org.commonjava.service.storage.dto.BatchDeleteResult;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -141,7 +142,28 @@ public class StorageResourceTest
                                    .response();
 
         assertEquals( 200, response.statusCode() );
+    }
 
+    @Test
+    public void testBatchDelete()
+    {
+        JsonObject request = new JsonObject();
+        request.put( "filesystem", filesystem );
+        request.put( "paths", Arrays.asList( PATH ) );
+
+        Response response = given().contentType( ContentType.JSON )
+                .body( request.toString() )
+                .delete( API_BASE + "/filesystem" )
+                .then()
+                .extract()
+                .response();
+
+        assertEquals( 200, response.statusCode() );
+
+        BatchDeleteResult result = response.getBody().as( BatchDeleteResult.class );
+        assertTrue( result.getFailed().isEmpty() );
+        assertTrue( result.getSucceeded().contains( PATH ));
+        assertTrue( result.getFilesystem().equals( filesystem ));
     }
 
     @Test
