@@ -223,12 +223,23 @@ public class StorageController
             return new FileCopyResult( false, "paths existing in target: " + existing );
         }
 
+        Set<String> skipped = new HashSet<>();
+        Set<String> completed = new HashSet<>();
         // all check passes
         request.getPaths().forEach( p -> {
-            fileManager.copy( request.getSourceFilesystem(), p, request.getTargetFilesystem(), p );
+            boolean exist = fileManager.exists( request.getTargetFilesystem(), p );
+            if ( exist )
+            {
+                skipped.add(p);
+            }
+            else
+            {
+                fileManager.copy(request.getSourceFilesystem(), p, request.getTargetFilesystem(), p);
+                completed.add(p);
+            }
         });
 
-        return new FileCopyResult( true );
+        return new FileCopyResult( true, completed, skipped );
     }
 
 }

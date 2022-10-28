@@ -6,8 +6,10 @@ import io.restassured.response.Response;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.commonjava.service.storage.dto.BatchDeleteResult;
+import org.commonjava.service.storage.dto.FileCopyResult;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -207,6 +209,32 @@ public class StorageResourceTest
     }
 
     @Test
+    public void testCopyFileSkipped() throws Exception
+    {
+        // Put a file in target before copy
+        prepareFile( new ByteArrayInputStream("this is a test".getBytes()), "maven:hosted:pnc-builds", PATH );
+
+        JsonObject request = new JsonObject();
+        request.put( "sourceFilesystem", "maven:remote:central" );
+        request.put( "targetFilesystem", "maven:hosted:pnc-builds" );
+        request.put( "paths",
+                Arrays.asList( PATH ) );
+
+        Response response = given().contentType( ContentType.JSON )
+                .body( request.toString() )
+                .post( API_BASE + "/copy" )
+                .then()
+                .extract()
+                .response();
+
+        assertEquals( 200, response.statusCode() );
+        FileCopyResult ret = response.getBody().as(FileCopyResult.class);
+        assertTrue( ret.isSuccess() );
+        assertTrue( ret.getSkipped().size() == 1 );
+        assertTrue( ret.getCompleted() == null || ret.getCompleted().isEmpty() );
+    }
+
+    @Test
     public void testCopyFileMissing()
     {
         JsonObject request = new JsonObject();
@@ -225,7 +253,7 @@ public class StorageResourceTest
         assertEquals( 200, response.statusCode() );
         assertFalse( response.jsonPath().getBoolean("success") );
         String err = response.jsonPath().getString( "message" );
-        System.out.println(">>> " + err );
+        //System.out.println(">>> " + err );
         assertTrue( err.contains( "missing" ) );
     }
 }
