@@ -43,10 +43,16 @@ public abstract class StorageTest
     public void start() throws Exception
     {
         if ( isPrepareFile() ) {
-            try (InputStream in = url.openStream();
-                 OutputStream out = fileManager.openOutputStream(filesystem, PATH)) {
-                IOUtils.copy(in, out);
+            try (InputStream in = url.openStream()) {
+                 prepareFile( in, filesystem, PATH );
             }
+        }
+    }
+
+    protected void prepareFile( InputStream in, String filesystem, String path ) throws Exception
+    {
+        try (OutputStream out = fileManager.openOutputStream(filesystem, path)) {
+            IOUtils.copy(in, out);
         }
     }
 
