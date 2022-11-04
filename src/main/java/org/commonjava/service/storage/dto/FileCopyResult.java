@@ -61,4 +61,14 @@ public class FileCopyResult
     public void setSkipped(Set<String> skipped) {
         this.skipped = skipped;
     }
+
+    @Override
+    public String toString() {
+        return "FileCopyResult{" +
+                "success=" + success +
+                ", completed=" + completed +
+                ", skipped=" + skipped +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }
