@@ -28,10 +28,8 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -102,6 +100,22 @@ public class StorageResource
             response = responseHelper.formatResponse( e );
         }
         return response;
+    }
+
+    @Operation( description = "Check a file" )
+    @APIResponse( responseCode = "200", description = "The file exists" )
+    @APIResponse( responseCode = "404", description = "The file doesn't exist" )
+    @HEAD
+    @Path( "content/{filesystem}/{path: (.*)}" )
+    public Response head( final @PathParam( "filesystem" ) String filesystem,
+                         final @PathParam( "path" ) String path )
+    {
+        logger.info( "Head [{}]{}", filesystem, path );
+        if (controller.exist(filesystem, path))
+        {
+            return Response.ok().build();
+        }
+        return Response.status( Response.Status.NOT_FOUND ).build();
     }
 
     @Operation( summary = "Delete a file." )
@@ -263,6 +277,23 @@ public class StorageResource
         logger.info( "Batch delete: {}", request );
         BatchDeleteResult result = controller.cleanup( request.getPaths(), request.getFilesystem() );
 
+        logger.debug( "Batch delete result: {}", result );
+        return responseHelper.formatOkResponseWithJsonEntity( result );
+    }
+
+    @Operation( summary = "Check existence for multiple paths in one filesystem." )
+    @RequestBody( description = "The request", name = "body", required = true,
+            content = @Content( schema = @Schema( implementation = BatchExistRequest.class ) ) )
+    @APIResponses( { @APIResponse( responseCode = "200",
+            content = @Content( schema = @Schema( implementation = BatchExistResult.class ) ) ) } )
+    @Consumes( APPLICATION_JSON )
+    @Produces( APPLICATION_JSON )
+    @GET
+    @Path( "filesystem/exist" )
+    public Response exist( final BatchExistRequest request )
+    {
+        logger.info( "Batch exist: {}", request );
+        BatchExistResult result = controller.exist( request );
         logger.debug( "Batch delete result: {}", result );
         return responseHelper.formatOkResponseWithJsonEntity( result );
     }

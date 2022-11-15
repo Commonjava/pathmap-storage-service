@@ -6,6 +6,7 @@ import io.restassured.response.Response;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.commonjava.service.storage.dto.BatchDeleteResult;
+import org.commonjava.service.storage.dto.BatchExistResult;
 import org.commonjava.service.storage.dto.FileCopyResult;
 import org.junit.jupiter.api.Test;
 
@@ -165,6 +166,29 @@ public class StorageResourceTest
         BatchDeleteResult result = response.getBody().as( BatchDeleteResult.class );
         assertTrue( result.getFailed().isEmpty() );
         assertTrue( result.getSucceeded().contains( PATH ));
+        assertTrue( result.getFilesystem().equals( filesystem ));
+    }
+
+    @Test
+    public void testBatchExist()
+    {
+        String nonExistPath = "some/path/not/exist";
+        JsonObject request = new JsonObject();
+        request.put( "filesystem", filesystem );
+        request.put( "paths", Arrays.asList( PATH, nonExistPath ) );
+
+        Response response = given().contentType( ContentType.JSON )
+                .body( request.toString() )
+                .get( API_BASE + "/filesystem/exist" )
+                .then()
+                .extract()
+                .response();
+
+        assertEquals( 200, response.statusCode() );
+
+        BatchExistResult result = response.getBody().as( BatchExistResult.class );
+        assertTrue( result.getMissing().size() == 1 );
+        assertTrue( result.getMissing().contains(nonExistPath));
         assertTrue( result.getFilesystem().equals( filesystem ));
     }
 
