@@ -44,13 +44,15 @@ public class StorageController
         return fileManager.openInputStream( fileSystem, path );
     }
 
-    public boolean exists( String fileSystem, String path )
+    public boolean exist(String fileSystem, String path )
     {
         return fileManager.exists( fileSystem, path );
     }
 
-    public BatchExistResult exists(String filesystem, Set<String> paths)
+    public BatchExistResult exist(final BatchExistRequest request)
     {
+        final String filesystem = request.getFilesystem();
+        final Set<String> paths = request.getPaths();
         BatchExistResult result = new BatchExistResult();
         result.setFilesystem( filesystem );
         Set<String> missing = new HashSet<>();
