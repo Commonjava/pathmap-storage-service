@@ -49,6 +49,25 @@ public class StorageController
         return fileManager.exists( fileSystem, path );
     }
 
+    public BatchExistResult exists(String filesystem, Set<String> paths)
+    {
+        BatchExistResult result = new BatchExistResult();
+        result.setFilesystem( filesystem );
+        Set<String> missing = new HashSet<>();
+        if ( paths != null )
+        {
+            paths.forEach( p -> {
+                boolean exists = fileManager.exists( filesystem, p);
+                if (!exists)
+                {
+                    missing.add(p);
+                }
+            });
+        }
+        result.setMissing( missing );
+        return result;
+    }
+
     public boolean delete( String fileSystem, String path )
     {
         return fileManager.delete( fileSystem, path );

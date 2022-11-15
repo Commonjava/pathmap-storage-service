@@ -267,6 +267,23 @@ public class StorageResource
         return responseHelper.formatOkResponseWithJsonEntity( result );
     }
 
+    @Operation( summary = "Check existence for multiple paths in one filesystem." )
+    @RequestBody( description = "The request", name = "body", required = true,
+            content = @Content( schema = @Schema( implementation = BatchExistRequest.class ) ) )
+    @APIResponses( { @APIResponse( responseCode = "200",
+            content = @Content( schema = @Schema( implementation = BatchExistResult.class ) ) ) } )
+    @Consumes( APPLICATION_JSON )
+    @Produces( APPLICATION_JSON )
+    @GET
+    @Path( "filesystem/exist" )
+    public Response exist( final BatchExistRequest request )
+    {
+        logger.info( "Batch exist: {}", request );
+        BatchExistResult result = controller.exists( request.getFilesystem(), request.getPaths() );
+        logger.debug( "Batch delete result: {}", result );
+        return responseHelper.formatOkResponseWithJsonEntity( result );
+    }
+
     @Operation( summary = "Get all filesystems." )
     @APIResponses( { @APIResponse( responseCode = "200", description = "The filesystems." ) } )
     @Produces( APPLICATION_JSON )
