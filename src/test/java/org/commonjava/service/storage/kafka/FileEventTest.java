@@ -2,9 +2,10 @@ package org.commonjava.service.storage.kafka;
 
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
-import io.smallrye.reactive.messaging.connectors.InMemoryConnector;
-import io.smallrye.reactive.messaging.connectors.InMemorySink;
-import io.smallrye.reactive.messaging.connectors.InMemorySource;
+
+import io.smallrye.reactive.messaging.providers.connectors.InMemoryConnector;
+import io.smallrye.reactive.messaging.providers.connectors.InMemorySink;
+import io.smallrye.reactive.messaging.providers.connectors.InMemorySource;
 import org.commonjava.event.file.FileEvent;
 import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ public class FileEventTest
     @Test
     void testProduceFileEvent()
     {
-        InMemorySink<FileEvent> queue = connector.sink( "file-event-out");
+        InMemorySink<Object> queue = connector.sink("file-event-out");
 
         // TODO trigger the application to send the message
 
