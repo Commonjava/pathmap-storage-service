@@ -25,5 +25,5 @@ services:
       - "MAX_HEAP_SIZE=256M"
       - "HEAP_NEWSIZE=128M"
     restart: always 
-    volumes:
-      - /tmp/cassandra:/var/lib/cassandra
+    #volumes:
+    #  - /tmp/cassandra:/var/lib/cassandra

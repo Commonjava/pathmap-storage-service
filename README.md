@@ -28,25 +28,21 @@ $ git clone git@github.com:Commonjava/pathmap-storage-service.git
 $ cd indy-storage-service
 ```
 
-### 2. (Optional) Build
-If you only want to run pre-built Docker images, go directly to next step.
+### 2. Start up the backend Cassandra DB
 ```
-$ mvn clean compile
+$ docker-compose up
 ```
+**NOTE**: Make sure you have docker started, e.g 'sudo service docker start' on Linux.
 
-### 3. Start the services
-Below will start standalone Pathmap storage service and its dependants. 
-
-**NOTE**: Make sure you have Docker installed and the demon started.
-
+### 3. Start
+Run it in **development** mode.
 ```
-docker-compose -f docker-compose-all.yml up
+$ mvn quarkus:dev
 ```
 
-### 4. Verify the service running
-By clicking http://localhost:8080
+Verify the service running on http://localhost:8080
 
-### 5. Test
+### 4. Test
 Open another terminal, upload a file, download it, or list a directory.
 ```
 $ echo "test $(date)" | curl -X PUT -d @- http://localhost:8080/api/storage/content/myfiles/foo/bar.txt
@@ -54,17 +50,18 @@ $ curl http://localhost:8080/api/storage/content/myfiles/foo/bar.txt
 $ curl http://localhost:8080/api/storage/browse/myfiles/foo
 ```
 
-## Development
-For developers, you can start in **debug** mode.
-```
-$ docker-compose up
-$ mvn quarkus:dev
-```
-
-## Cluster
-
+## Start the services via pre-built images
 The pre-built docker image is at https://quay.io/factory2/pathmap-storage-service:latest.
-You can run the **cluster mode** by deploying it on a cloud platform.
+Below will start a standalone Pathmap storage service and its dependant Cassandra.
+
+**NOTE**: Make sure you have Docker installed and the demon started.
+```
+docker-compose -f docker-compose-all.yml up
+```
+
+## Clustering
+
+You can run the **storage cluster** on a cloud platform.
 
 ### Deploy on Openshift
 
@@ -107,4 +104,4 @@ $ oc create -f ./sample/ocp/deploymentconfig-pathmap-storage-service.yaml
 $ oc create -f ./sample/ocp/service-pathmap-storage-service.yaml
 ```
 
-2.5 Create a Route to expose the service, via Ocp UI.
+2.5 Create a Route to expose the service via Ocp UI.

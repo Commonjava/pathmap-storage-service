@@ -1,7 +1,7 @@
 package org.commonjava.service.storage.route;
 
 import io.quarkus.vertx.web.Route;
-import io.vertx.core.http.HttpMethod;
+import io.quarkus.vertx.web.Route.HttpMethod;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.commons.io.IOUtils;
 
