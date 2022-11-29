@@ -32,6 +32,7 @@
         <cassandra-maven-plugin.version>3.6</cassandra-maven-plugin.version>
         <cassandra-unit.version>3.7.1.0</cassandra-unit.version>
         <indy-event.version>1.0-SNAPSHOT</indy-event.version>
+        <quarkus.package.type>uber-jar</quarkus.package.type>
     </properties>
 
     <dependencies>
