@@ -8,7 +8,15 @@ quarkus:
     package:
         uber-jar: true
     oidc:
-        enabled: false
+        enabled: true
+        auth-server-url: "https://localhost:8543/realms/indyreposervice"
+        client-id: indy
+        credentials:
+            secret: secret
+        tls:
+            verification: none
+        token:
+            issuer: any
     security:
         auth:
             enabled-in-dev-mode: false
