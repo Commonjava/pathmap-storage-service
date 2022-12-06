@@ -5,10 +5,13 @@ quarkus:
         read-timeout: 30m
         limits:
           max-body-size: 500M
-
     package:
         uber-jar: true
-
+    oidc:
+        enabled: false
+    security:
+        auth:
+            enabled-in-dev-mode: false
     # Logging (disable console on prod)
     log:
         level: INFO
