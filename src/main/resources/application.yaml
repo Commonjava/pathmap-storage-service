@@ -52,10 +52,6 @@ storage:
     baseDir: "/tmp"
     readonly: false
 
-#kafka:
-#    bootstrap:
-#        servers: "localhost:9092"
-
 "%dev":
     quarkus:
         kubernetes-config:
@@ -64,7 +60,7 @@ storage:
             level: INFO
             category:
                 "org.commonjava.service.storage":
-                    level: TRACE
+                    level: DEBUG
             console:
                 enable: true
             file:
@@ -81,24 +77,3 @@ storage:
         user: cassandra
         pass: cassandra
         keyspace: indystorage
-
-#    kafka:
-#        bootstrap:
-#            servers: "localhost:9092"
-#
-#    # Configuring the incoming/outgoing channel
-#    mp:
-#        messaging:
-#            outgoing:
-#                file-event-out:
-#                    connector: smallrye-kafka
-#                    topic: file-event
-#                    value:
-#                        serializer: io.quarkus.kafka.client.serialization.ObjectMapperSerializer
-#            incoming:
-#                file-event-in:
-#                    connector: smallrye-kafka
-#                    topic: file-event
-#                    value:
-#                        deserializer: org.commonjava.service.storage.event.FileEventDeserializer
-

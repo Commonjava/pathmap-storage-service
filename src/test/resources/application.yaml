@@ -40,7 +40,3 @@ cassandra:
 storage:
     baseDir: "/tmp"
     readonly: false
-
-#kafka:
-#    bootstrap:
-#        servers: "localhost:9092"
