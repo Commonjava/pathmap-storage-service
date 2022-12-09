@@ -31,7 +31,8 @@ public class ReadonlyFilter implements ContainerRequestFilter
             // only allow GET methods
             if ( !context.getMethod().equals(HttpMethod.GET) )
             {
-                context.abortWith( Response.status(Response.Status.METHOD_NOT_ALLOWED).build() );
+                context.abortWith( Response.status(Response.Status.FORBIDDEN)
+                        .header("Storage-Service-Mode", "readonly").build() );
             }
         }
     }
