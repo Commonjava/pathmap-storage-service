@@ -3,8 +3,6 @@ package org.commonjava.service.storage.jaxrs;
 import org.commonjava.service.storage.controller.StorageController;
 import org.commonjava.service.storage.dto.*;
 import org.commonjava.service.storage.util.ResponseHelper;
-import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
-import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -40,8 +38,6 @@ import static org.commonjava.storage.pathmapped.util.PathMapUtils.ROOT_DIR;
 @Tag( name = "Storage api", description = "Resource for storage" )
 @ApplicationScoped
 @Path( StorageResource.API_BASE )
-@CircuitBreaker(requestVolumeThreshold = 4)
-@Retry(maxRetries = 4)
 public class StorageResource
 {
     public final static String API_BASE = "/api/storage";
