@@ -256,7 +256,7 @@ public class StorageResource
     public Response cleanup( final BatchCleanupRequest request )
     {
         logger.info( "Batch cleanup: {}", request );
-        BatchCleanupResult result = controller.cleanup( request.getPath(), request.getFilesystems() );
+        BatchCleanupResult result = controller.cleanup( request.getPaths(), request.getFilesystems() );
 
         logger.debug( "Batch cleanup result: {}", result );
         return responseHelper.formatOkResponseWithJsonEntity( result );

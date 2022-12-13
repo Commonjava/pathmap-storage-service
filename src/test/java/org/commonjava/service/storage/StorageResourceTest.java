@@ -133,7 +133,7 @@ public class StorageResourceTest
     public void testCleanup()
     {
         JsonObject request = new JsonObject();
-        request.put( "path", PATH);
+        request.put( "paths", Arrays.asList(PATH));
         request.put( "filesystems",
                      Arrays.asList( "maven:remote:central", "maven:hosted:pnc-builds", "maven:group:public" ) );
 

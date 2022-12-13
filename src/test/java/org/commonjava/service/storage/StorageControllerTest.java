@@ -4,7 +4,6 @@ import io.quarkus.test.junit.QuarkusTest;
 import org.commonjava.service.storage.controller.StorageController;
 import org.commonjava.service.storage.dto.BatchCleanupResult;
 import org.commonjava.service.storage.dto.FileInfoObj;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
@@ -54,8 +53,10 @@ public class StorageControllerTest extends StorageTest
 
         Set<String> repos = new HashSet<>();
         repos.add( filesystem );
-        BatchCleanupResult cleanupResult = controller.cleanup( PATH, repos );
-        assertEquals( filesystem, String.join( ",", cleanupResult.getSuccess() ) );
+        HashSet<String> paths = new HashSet<>();
+        paths.add(PATH);
+        BatchCleanupResult cleanupResult = controller.cleanup( paths, repos );
+        assertEquals( filesystem + ":" + PATH, String.join( ",", cleanupResult.getSucceeded() ) );
 
         // After cleanup
         result = controller.getFileInfo( filesystem, PATH );

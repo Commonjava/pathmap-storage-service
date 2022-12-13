@@ -2,21 +2,14 @@ package org.commonjava.service.storage.dto;
 
 import java.util.Set;
 
+/**
+ * Cleanup multiple paths from multiple filesystems.
+ */
 public class BatchCleanupRequest
 {
-    private String path;
+    private Set<String> paths;
 
     private Set<String> filesystems;
-
-    public String getPath()
-    {
-        return path;
-    }
-
-    public void setPath( String path )
-    {
-        this.path = path;
-    }
 
     public Set<String> getFilesystems()
     {
@@ -28,10 +21,18 @@ public class BatchCleanupRequest
         this.filesystems = filesystems;
     }
 
+    public Set<String> getPaths() {
+        return paths;
+    }
+
+    public void setPaths(Set<String> paths) {
+        this.paths = paths;
+    }
+
     @Override
     public String toString() {
         return "BatchCleanupRequest{" +
-                "path='" + path + '\'' +
+                "paths=" + paths +
                 ", filesystems=" + filesystems +
                 '}';
     }
