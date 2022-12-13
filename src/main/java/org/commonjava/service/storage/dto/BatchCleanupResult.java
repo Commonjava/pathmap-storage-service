@@ -32,4 +32,11 @@ public class BatchCleanupResult
         this.failed = failed;
     }
 
+    @Override
+    public String toString() {
+        return "BatchCleanupResult{" +
+                "succeeded=" + succeeded +
+                ", failed=" + failed +
+                '}';
+    }
 }
