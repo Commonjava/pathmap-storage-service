@@ -2,6 +2,9 @@ package org.commonjava.service.storage.dto;
 
 import java.util.Set;
 
+/**
+ * Delete multiple paths in one filesystem.
+ */
 public class BatchDeleteRequest
 {
     private Set<String> paths;

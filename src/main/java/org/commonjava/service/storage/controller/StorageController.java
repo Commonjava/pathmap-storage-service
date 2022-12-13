@@ -146,24 +146,26 @@ public class StorageController
         return null;
     }
 
-    public BatchCleanupResult cleanup(String path, Set<String> filesystems )
+    public BatchCleanupResult cleanup(Set<String> paths, Set<String> filesystems )
     {
         Set<String> success = new HashSet<>();
         Set<String> failures = new HashSet<>();
         for ( String fs : filesystems )
         {
-            if ( fileManager.delete( fs, path ) )
-            {
-                success.add( fs );
-            }
-            else
-            {
-                failures.add( fs );
+            for (String path : paths) {
+                if ( fileManager.delete( fs, path ) )
+                {
+                    success.add( fs + ":" + path );
+                }
+                else
+                {
+                    failures.add( fs + ":" + path );
+                }
             }
         }
-        BatchCleanupResult result = new BatchCleanupResult( path );
-        result.setSuccess( success );
-        result.setFailures( failures );
+        BatchCleanupResult result = new BatchCleanupResult();
+        result.setSucceeded( success );
+        result.setFailed( failures );
         return result;
     }
 

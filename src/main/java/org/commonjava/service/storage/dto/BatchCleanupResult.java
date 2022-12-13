@@ -4,45 +4,32 @@ import java.util.Set;
 
 public class BatchCleanupResult
 {
-    private String path;
+    private Set<String> succeeded;
 
-    private Set<String> success;
+    private Set<String> failed;
 
-    private Set<String> failures;
-
-    public BatchCleanupResult(String path )
+    public BatchCleanupResult()
     {
-        this.path = path;
     }
 
-    public String getPath()
+    public Set<String> getSucceeded()
     {
-        return path;
+        return succeeded;
     }
 
-    public void setPath( String path )
+    public void setSucceeded(Set<String> succeeded)
     {
-        this.path = path;
+        this.succeeded = succeeded;
     }
 
-    public Set<String> getSuccess()
+    public Set<String> getFailed()
     {
-        return success;
+        return failed;
     }
 
-    public void setSuccess( Set<String> success )
+    public void setFailed(Set<String> failed)
     {
-        this.success = success;
-    }
-
-    public Set<String> getFailures()
-    {
-        return failures;
-    }
-
-    public void setFailures( Set<String> failures )
-    {
-        this.failures = failures;
+        this.failed = failed;
     }
 
 }
