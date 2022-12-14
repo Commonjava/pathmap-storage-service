@@ -31,7 +31,6 @@
         <toolchains-plugin.version>3.0.0</toolchains-plugin.version>
         <cassandra-maven-plugin.version>3.6</cassandra-maven-plugin.version>
         <cassandra-unit.version>3.7.1.0</cassandra-unit.version>
-        <indy-event.version>1.0-SNAPSHOT</indy-event.version>
         <indysecurity.verison>1.0</indysecurity.verison>
         <quarkus.package.type>uber-jar</quarkus.package.type>
     </properties>
@@ -107,11 +106,6 @@
             <version>${path-mapped-storage.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.commonjava.indy.service</groupId>
-            <artifactId>indy-event-model</artifactId>
-            <version>${indy-event.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.commonjava.indy.service</groupId>
             <artifactId>indy-security</artifactId>
