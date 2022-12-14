@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
-import static org.apache.kafka.common.utils.Utils.sleep;
+import static java.lang.Thread.sleep;
 import static org.commonjava.service.storage.jaxrs.StorageResource.API_BASE;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,7 +46,7 @@ public class StorageResourceTest
     }
 
     @Test
-    public void testPutFileWithTimeout()
+    public void testPutFileWithTimeout() throws InterruptedException
     {
         given().pathParam( "filesystem", filesystem )
                 .pathParam( "path", PATH)
