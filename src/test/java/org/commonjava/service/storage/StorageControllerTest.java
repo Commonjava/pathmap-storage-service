@@ -7,6 +7,7 @@ import org.commonjava.service.storage.dto.FileInfoObj;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -56,7 +57,8 @@ public class StorageControllerTest extends StorageTest
         HashSet<String> paths = new HashSet<>();
         paths.add(PATH);
         BatchCleanupResult cleanupResult = controller.cleanup( paths, repos );
-        assertEquals( filesystem + ":" + PATH, String.join( ",", cleanupResult.getSucceeded() ) );
+        String expected = Paths.get(filesystem, PATH).toString();
+        assertEquals( expected, String.join( ",", cleanupResult.getSucceeded() ) );
 
         // After cleanup
         result = controller.getFileInfo( filesystem, PATH );
@@ -64,4 +66,3 @@ public class StorageControllerTest extends StorageTest
     }
 
 }
-

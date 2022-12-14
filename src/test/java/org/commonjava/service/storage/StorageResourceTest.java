@@ -198,7 +198,7 @@ public class StorageResourceTest
         JsonArray request = new JsonArray();
         request.add( "maven:remote:central" );
         request.add( "maven:group:public" );
-        System.out.println(">>>" + request);
+        //System.out.println(">>>" + request);
         Response response = given().contentType( ContentType.JSON )
                                    .body( request.toString() )
                                    .pathParam( "path", PATH)

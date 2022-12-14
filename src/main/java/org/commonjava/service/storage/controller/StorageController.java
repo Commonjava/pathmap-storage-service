@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -153,13 +154,14 @@ public class StorageController
         for ( String fs : filesystems )
         {
             for (String path : paths) {
+                String mergedPath = Paths.get(fs, path).toString();
                 if ( fileManager.delete( fs, path ) )
                 {
-                    success.add( fs + ":" + path );
+                    success.add( mergedPath );
                 }
                 else
                 {
-                    failures.add( fs + ":" + path );
+                    failures.add( mergedPath );
                 }
             }
         }
