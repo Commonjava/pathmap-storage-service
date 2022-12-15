@@ -156,7 +156,7 @@ public class StorageResourceTest
 
         Response response = given().contentType( ContentType.JSON )
                 .body( request.toString() )
-                .delete( API_BASE + "/filesystem" )
+                .post( API_BASE + "/filesystem" )
                 .then()
                 .extract()
                 .response();
