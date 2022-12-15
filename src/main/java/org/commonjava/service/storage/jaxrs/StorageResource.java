@@ -270,7 +270,7 @@ public class StorageResource
             description = "The result of deleted files." ) } )
     @Consumes( APPLICATION_JSON )
     @Produces( APPLICATION_JSON )
-    @DELETE
+    @POST
     @Path( "filesystem" )
     public Response cleanup( final BatchDeleteRequest request )
     {
