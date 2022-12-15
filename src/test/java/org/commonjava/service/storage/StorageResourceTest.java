@@ -179,7 +179,7 @@ public class StorageResourceTest
 
         Response response = given().contentType( ContentType.JSON )
                 .body( request.toString() )
-                .get( API_BASE + "/filesystem/exist" )
+                .post( API_BASE + "/filesystem/exist" )
                 .then()
                 .extract()
                 .response();
