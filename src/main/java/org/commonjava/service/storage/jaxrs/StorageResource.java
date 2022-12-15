@@ -288,7 +288,7 @@ public class StorageResource
             content = @Content( schema = @Schema( implementation = BatchExistResult.class ) ) ) } )
     @Consumes( APPLICATION_JSON )
     @Produces( APPLICATION_JSON )
-    @GET
+    @POST
     @Path( "filesystem/exist" )
     public Response exist( final BatchExistRequest request )
     {
