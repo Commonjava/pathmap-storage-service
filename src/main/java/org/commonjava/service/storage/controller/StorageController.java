@@ -201,6 +201,19 @@ public class StorageController
         return emptyList();
     }
 
+    public Collection<? extends Filesystem> getEmptyFilesystems()
+    {
+        return fileManager.getFilesystems().stream()
+                .filter(filesystem -> filesystem.getFileCount() == 0)
+                .collect(Collectors.toList());
+    }
+
+    public void purgeEmptyFilesystems()
+    {
+        Collection<? extends Filesystem> ret = getEmptyFilesystems();
+        ret.forEach( filesystem -> fileManager.purgeFilesystem( filesystem ));
+    }
+
     /**
      * By default, the pathmap storage will override existing paths. Here we must check:
      * 1. all paths exist in source
