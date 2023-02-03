@@ -292,9 +292,9 @@ public class StorageResource
     @Path( "filesystem/exist" )
     public Response exist( final BatchExistRequest request )
     {
-        logger.info( "Batch exist: {}", request );
+        logger.info( "Batch exist (size: {}): {}", request.getPaths().size(), request );
         BatchExistResult result = controller.exist( request );
-        logger.debug( "Batch delete result: {}", result );
+        logger.debug( "Batch exist result (size: {}): {}", result.getMissing().size(), result );
         return responseHelper.formatOkResponseWithJsonEntity( result );
     }
 
