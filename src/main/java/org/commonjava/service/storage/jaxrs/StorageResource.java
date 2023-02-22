@@ -211,7 +211,8 @@ public class StorageResource
     @Path( "copy" )
     public Response copy( final FileCopyRequest request )
     {
-        logger.info( "Copying: {}", request );
+        final int size = request.getPaths() != null ? request.getPaths().size() : -1;
+        logger.info( "Copying (size: {}): {}", size, request );
         FileCopyResult result = controller.copy( request );
 
         logger.debug( "File copy result: {}", result );
