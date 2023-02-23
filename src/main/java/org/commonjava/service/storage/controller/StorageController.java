@@ -20,6 +20,7 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
@@ -219,7 +220,8 @@ public class StorageController
      * 1. all paths exist in source
      * 2. if not allow override, all paths must not exist in target
      */
-    public FileCopyResult copy(FileCopyRequest request) {
+    public FileCopyResult copy(FileCopyRequest request)
+    {
         if ( isBlank(request.getSourceFilesystem()) || isBlank(request.getTargetFilesystem() ) )
         {
             return new FileCopyResult( false, "source or target filesystem null" );
@@ -230,7 +232,7 @@ public class StorageController
             return new FileCopyResult( false, "paths null" );
         }
 
-        // check paths existence
+        // Check paths on source filesystem
         Set<String> missing = new HashSet<>();
         request.getPaths().forEach( p -> {
             boolean exist = fileManager.exists( request.getSourceFilesystem(), p );
@@ -244,29 +246,31 @@ public class StorageController
             return new FileCopyResult( false, "paths missing from source: " + missing );
         }
 
-        // if not allow override, all paths must not exist in target
+        // if not allow override, paths must not exist in target
         Set<String> existing = new HashSet<>();
-        if ( request.isFailWhenExists() )
+        request.getPaths().forEach( p -> {
+            boolean exist = fileManager.exists( request.getTargetFilesystem(), p );
+            if ( exist )
+            {
+                existing.add(p);
+            }
+        });
+        logger.debug( "Found {} existing paths in target {}", existing.size(), request.getTargetFilesystem() );
+        if ( request.isFailWhenExists() && !existing.isEmpty() )
         {
-            request.getPaths().forEach( p -> {
-                boolean exist = fileManager.exists( request.getTargetFilesystem(), p );
-                if ( exist )
-                {
-                    existing.add(p);
-                }
-            });
-        }
-        if ( !existing.isEmpty() )
-        {
-            return new FileCopyResult( false, "paths existing in target: " + existing );
+            return new FileCopyResult( false, existing.size() +
+                    " paths exist in target (failWhenExists: true): " + existing );
         }
 
         Set<String> skipped = new HashSet<>();
         Set<String> completed = new HashSet<>();
-        // all check passes
+        final int count = request.getPaths().size() - existing.size();
+        logger.debug( "Copying {} paths from {} to {}", count, request.getSourceFilesystem(),
+                request.getTargetFilesystem() );
+
+        final AtomicInteger copied = new AtomicInteger();
         request.getPaths().forEach( p -> {
-            boolean exist = fileManager.exists( request.getTargetFilesystem(), p );
-            if ( exist )
+            if ( existing.contains( p ) )
             {
                 skipped.add(p);
             }
@@ -274,6 +278,7 @@ public class StorageController
             {
                 fileManager.copy(request.getSourceFilesystem(), p, request.getTargetFilesystem(), p);
                 completed.add(p);
+                logger.debug( "Copied ({}) {}", copied.incrementAndGet(), p );
             }
         });
 
