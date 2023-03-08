@@ -27,7 +27,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <path-mapped-storage.version>2.3-SNAPSHOT</path-mapped-storage.version>
+        <path-mapped-storage.version>2.3</path-mapped-storage.version>
         <toolchains-plugin.version>3.0.0</toolchains-plugin.version>
         <cassandra-maven-plugin.version>3.6</cassandra-maven-plugin.version>
         <cassandra-unit.version>3.7.1.0</cassandra-unit.version>
