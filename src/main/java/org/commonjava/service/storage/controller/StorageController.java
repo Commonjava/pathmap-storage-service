@@ -187,18 +187,22 @@ public class StorageController
         return result;
     }
 
-    public BatchDeleteResult cleanup(Set<String> paths, String filesystem) {
+    public BatchDeleteResult cleanup(Set<String> paths, String filesystem)
+    {
         Set<String> succeeded = new HashSet<>();
         Set<String> failed = new HashSet<>();
-        for ( String p : paths )
+        if ( paths != null )
         {
-            if ( fileManager.delete( filesystem, p ) )
+            for (String p : paths)
             {
-                succeeded.add( p );
-            }
-            else
-            {
-                failed.add( p );
+                if (fileManager.delete(filesystem, p))
+                {
+                    succeeded.add(p);
+                }
+                else
+                {
+                    failed.add(p);
+                }
             }
         }
         BatchDeleteResult result = new BatchDeleteResult();
