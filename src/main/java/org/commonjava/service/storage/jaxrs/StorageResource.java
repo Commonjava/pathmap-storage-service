@@ -227,10 +227,11 @@ public class StorageResource
     public Response copy( final FileCopyRequest request )
     {
         final int size = request.getPaths() != null ? request.getPaths().size() : -1;
-        logger.info( "Copying (size: {}): {}", size, request );
+        logger.info( "File copy (size: {}): {}", size, request );
         FileCopyResult result = controller.copy( request );
 
-        logger.debug( "File copy result: {}", result );
+        logger.debug( "File copy result (source: {}, target: {}): {}", request.getSourceFilesystem(),
+                request.getTargetFilesystem(), result );
         return responseHelper.formatOkResponseWithJsonEntity( result );
     }
 
