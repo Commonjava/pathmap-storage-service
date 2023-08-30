@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
 import static java.lang.Thread.sleep;
@@ -295,4 +296,43 @@ public class StorageResourceTest
         //System.out.println(">>> " + err );
         assertTrue( err.contains( "missing" ) );
     }
+
+    /**
+     * Copied file expires in 1s. Wait and get it should return 404.
+     */
+    @Test
+    public void testCopyFileExpire() throws Exception
+    {
+        final String targetFilesystem = "maven:hosted:shared-imports";
+        final int timeoutSeconds = 1;
+
+        JsonObject request = new JsonObject();
+        request.put( "sourceFilesystem", "maven:remote:central" );
+        request.put( "targetFilesystem", targetFilesystem );
+        request.put( "paths",
+                Arrays.asList( PATH ) );
+        request.put( "timeoutSeconds", timeoutSeconds );
+
+        Response response = given().contentType( ContentType.JSON )
+                .body( request.toString() )
+                .post( API_BASE + "/copy" )
+                .then()
+                .extract()
+                .response();
+
+        assertEquals( 200, response.statusCode() );
+        assertTrue( response.jsonPath().getBoolean("success") );
+
+        // Sleep and wait for file expiring
+        sleep(TimeUnit.SECONDS.toMillis(timeoutSeconds));
+
+        // Get return 404
+        given().pathParam( "filesystem", targetFilesystem )
+                .pathParam( "path", PATH)
+                .when()
+                .get( API_BASE + "/content/{filesystem}/{path}" )
+                .then()
+                .statusCode( 404 );
+    }
+
 }
