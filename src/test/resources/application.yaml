@@ -15,6 +15,8 @@ quarkus:
         category:
             "org.commonjava.service.storage":
                 level: DEBUG
+            "org.commonjava.storage.pathmapped":
+                level: DEBUG
         console:
             level: DEBUG
             enable: true

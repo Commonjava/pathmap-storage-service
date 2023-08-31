@@ -288,6 +288,19 @@ public class StorageController
                 request.getTargetFilesystem() );
 
         final AtomicInteger copied = new AtomicInteger();
+
+        // Update creation (current time) and expiration for copied file
+        final Date current = new Date();
+        final Date expiration;
+        if ( request.getTimeoutSeconds() > 0 )
+        {
+            expiration = new Date( current.getTime() + TimeUnit.SECONDS.toMillis(request.getTimeoutSeconds()) );
+        }
+        else
+        {
+            expiration = null; // never expire
+        }
+
         request.getPaths().forEach( p -> {
             if ( existing.contains( p ) )
             {
@@ -295,7 +308,7 @@ public class StorageController
             }
             else
             {
-                fileManager.copy(request.getSourceFilesystem(), p, request.getTargetFilesystem(), p);
+                fileManager.copy(request.getSourceFilesystem(), p, request.getTargetFilesystem(), p, current, expiration);
                 completed.add(p);
                 logger.debug( "Copied ({}) {}", copied.incrementAndGet(), p );
             }
