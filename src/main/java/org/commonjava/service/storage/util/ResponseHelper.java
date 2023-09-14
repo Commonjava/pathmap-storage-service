@@ -40,7 +40,7 @@ public class ResponseHelper
     private final static Logger LOGGER = LoggerFactory.getLogger( ResponseHelper.class );
 
     @Inject
-    private ObjectMapper mapper;
+    ObjectMapper mapper;
 
     public Response formatRedirect( final URI uri )
     {

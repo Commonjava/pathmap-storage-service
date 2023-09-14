@@ -6,7 +6,7 @@ quarkus:
         limits:
           max-body-size: 500M
     package:
-        uber-jar: true
+        type: uber-jar
     oidc:
         enabled: true
         auth-server-url: "https://localhost:8543/realms/indyreposervice"
@@ -20,6 +20,21 @@ quarkus:
     security:
         auth:
             enabled-in-dev-mode: false
+    opentelemetry:
+        enabled: true
+        tracer:
+            enabled: true
+            sampler:
+                ~: ratio
+                ratio: 0.05
+            "resource-attributes":
+                - "service.name=pathmap-storage-service"
+                - "sample.rate=0.05"
+                - "deployment.environment=localhost"
+#            exporter:
+#                otlp:
+#                    endpoint: http://localhost:4317
+
     # Logging (disable console on prod)
     log:
         level: INFO
