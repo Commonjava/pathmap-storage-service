@@ -32,4 +32,7 @@ public interface StorageServiceConfig
 
     @WithName( "readonly" )
     boolean readonly();
+
+    @WithName( "removableFilesystemPattern" )
+    String removableFilesystemPattern();
 }

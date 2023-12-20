@@ -15,11 +15,14 @@
  */
 package org.commonjava.service.storage;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import org.commonjava.service.storage.dto.BatchDeleteRequest;
 import org.commonjava.service.storage.dto.BatchDeleteResult;
 import org.commonjava.service.storage.dto.BatchExistResult;
 import org.commonjava.service.storage.dto.FileCopyResult;
@@ -27,11 +30,14 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
 import static java.lang.Thread.sleep;
+import static org.commonjava.service.storage.jaxrs.StorageMaintResource.API_MAINT_BASE;
 import static org.commonjava.service.storage.jaxrs.StorageResource.API_BASE;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -129,13 +135,7 @@ public class StorageResourceTest
     @Test
     public void testListRoot()
     {
-        Response response = given().pathParam( "filesystem", filesystem )
-                                   .queryParam( "recursive", true )
-                                   .when()
-                                   .get( API_BASE + "/browse/{filesystem}" )
-                                   .then()
-                                   .extract()
-                                   .response();
+        Response response = doList();
 
         List<String> expectedList = Arrays.asList( "io/", "io/quarkus/", "io/quarkus/quarkus-junit5/",
                                                    "io/quarkus/quarkus-junit5/quarkus-junit5-1.12.0.Final.jar" );
@@ -143,6 +143,77 @@ public class StorageResourceTest
         assertEquals( 200, response.statusCode() );
         assertEquals( String.join( ",", expectedList ),
                                  String.join( ",", response.jsonPath().getList( "" ) ) );
+    }
+
+    private Response doList()
+    {
+        return given().pathParam( "filesystem", filesystem )
+                .queryParam( "recursive", true )
+                .when()
+                .get( API_BASE + "/browse/{filesystem}" )
+                .then()
+                .extract()
+                .response();
+    }
+
+    @Test
+    public void testListAndBatchDelete()
+            throws Exception
+    {
+        Response response = doList();
+        assertEquals( 200, response.statusCode() );
+
+        List<String> list = response.jsonPath().getList("");
+
+        BatchDeleteRequest request = new BatchDeleteRequest();
+        request.setFilesystem(filesystem);
+        request.setPaths(new HashSet<>(list));
+
+        // Batch deletion
+        response = doDelete(new ObjectMapper().writeValueAsString( request ));
+        assertEquals( 200, response.statusCode() );
+
+        List<String> expectedList = Arrays.asList( "io/", "io/quarkus/", "io/quarkus/quarkus-junit5/",
+                "io/quarkus/quarkus-junit5/quarkus-junit5-1.12.0.Final.jar" );
+
+        BatchDeleteResult result = response.getBody().as( BatchDeleteResult.class );
+        //System.out.println(">>>" + result);
+        assertTrue( result.getFailed().isEmpty() );
+        assertTrue( result.getSucceeded().containsAll( expectedList ));
+        assertTrue( result.getFilesystem().equals( filesystem ));
+    }
+
+    @Test
+    public void testPurge()
+            throws Exception
+    {
+        Response response = given()
+                .pathParam( "filesystem", filesystem)
+                .delete( API_MAINT_BASE + "/filesystem/{filesystem}" )
+                .then()
+                .extract()
+                .response();
+
+        assertEquals( 200, response.statusCode() );
+
+        List<String> expectedList = Arrays.asList( "io/", "io/quarkus/", "io/quarkus/quarkus-junit5/",
+                "io/quarkus/quarkus-junit5/quarkus-junit5-1.12.0.Final.jar" );
+
+        BatchDeleteResult result = response.getBody().as( BatchDeleteResult.class );
+        //System.out.println(">>>" + result);
+        assertTrue( result.getFailed().isEmpty() );
+        assertTrue( result.getSucceeded().containsAll( expectedList ));
+        assertTrue( result.getFilesystem().equals( filesystem ));
+    }
+
+    private Response doDelete(String json)
+    {
+        return given().contentType( ContentType.JSON )
+                .body( json )
+                .post( API_BASE + "/filesystem" )
+                .then()
+                .extract()
+                .response();
     }
 
     @Test
@@ -170,13 +241,7 @@ public class StorageResourceTest
         request.put( "filesystem", filesystem );
         request.put( "paths", Arrays.asList( PATH ) );
 
-        Response response = given().contentType( ContentType.JSON )
-                .body( request.toString() )
-                .post( API_BASE + "/filesystem" )
-                .then()
-                .extract()
-                .response();
-
+        Response response = doDelete( request.toString() );
         assertEquals( 200, response.statusCode() );
 
         BatchDeleteResult result = response.getBody().as( BatchDeleteResult.class );

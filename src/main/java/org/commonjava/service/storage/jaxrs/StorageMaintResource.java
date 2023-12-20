@@ -15,7 +15,10 @@
  */
 package org.commonjava.service.storage.jaxrs;
 
+import org.commonjava.service.storage.config.StorageServiceConfig;
 import org.commonjava.service.storage.controller.StorageController;
+import org.commonjava.service.storage.dto.BatchDeleteResult;
+import org.commonjava.service.storage.util.ResponseHelper;
 import org.commonjava.storage.pathmapped.model.Filesystem;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -44,6 +47,12 @@ public class StorageMaintResource
     @Inject
     StorageController controller;
 
+    @Inject
+    StorageServiceConfig config;
+
+    @Inject
+    ResponseHelper responseHelper;
+
     @Operation( summary = "Get empty filesystems." )
     @APIResponses( { @APIResponse( responseCode = "200", description = "The empty filesystems." ) } )
     @Produces( APPLICATION_JSON )
@@ -66,5 +75,23 @@ public class StorageMaintResource
         logger.info( "Purge empty filesystems" );
         controller.purgeEmptyFilesystems();
         return Response.ok().build();
+    }
+
+    @Operation( summary = "Purge specified filesystem." )
+    @APIResponses( { @APIResponse( responseCode = "200", description = "Purge done." ) } )
+    @DELETE
+    @Path( "filesystem/{filesystem}" )
+    public Response purgeFilesystem( final @PathParam( "filesystem" ) String filesystem )
+    {
+        logger.info( "Purge filesystem: {}", filesystem );
+        if ( !filesystem.matches( config.removableFilesystemPattern() ) )
+        {
+            String msg = String.format( "Purge filesystem failed (not removable), filesystem: %s", filesystem );
+            logger.warn( msg );
+            return responseHelper.formatBadRequestResponse( msg );
+        }
+        BatchDeleteResult result = controller.purgeFilesystem( filesystem );
+        logger.debug( "Purge filesystem result: {}", result );
+        return responseHelper.formatOkResponseWithJsonEntity( result );
     }
 }

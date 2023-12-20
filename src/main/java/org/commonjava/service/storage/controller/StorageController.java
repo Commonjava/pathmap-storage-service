@@ -43,6 +43,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.commonjava.service.storage.util.Utils.getDuration;
 import static org.commonjava.service.storage.util.Utils.sort;
+import static org.commonjava.storage.pathmapped.util.PathMapUtils.ROOT_DIR;
 
 @ApplicationScoped
 public class StorageController
@@ -187,7 +188,7 @@ public class StorageController
         return result;
     }
 
-    public BatchDeleteResult cleanup(Set<String> paths, String filesystem)
+    public BatchDeleteResult cleanup(Collection<String> paths, String filesystem)
     {
         Set<String> succeeded = new HashSet<>();
         Set<String> failed = new HashSet<>();
@@ -195,7 +196,7 @@ public class StorageController
         {
             for (String p : paths)
             {
-                if (fileManager.delete(filesystem, p))
+                if (fileManager.delete(filesystem, p, true))
                 {
                     succeeded.add(p);
                 }
@@ -210,6 +211,20 @@ public class StorageController
         result.setSucceeded( succeeded );
         result.setFailed( failed );
         return result;
+    }
+
+    public BatchDeleteResult purgeFilesystem(String filesystem)
+    {
+        // list and delete all dir/files
+        String[] files = fileManager.list( filesystem, ROOT_DIR, true, 0, FileType.all );
+        BatchDeleteResult ret = cleanup(Arrays.asList(files), filesystem);
+        // also remove the statistics entry
+        Filesystem statistics = fileManager.getFilesystem(filesystem);
+        if ( statistics != null )
+        {
+            fileManager.purgeFilesystem( statistics );
+        }
+        return ret;
     }
 
     public Collection<String> getFilesystems()
