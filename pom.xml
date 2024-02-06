@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.commonjava</groupId>
         <artifactId>service-parent</artifactId>
-        <version>2</version>
+        <version>5-SNAPSHOT</version>
     </parent>
 
     <groupId>org.commonjava.indy.service</groupId>
@@ -44,10 +44,11 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <path-mapped-storage.version>2.6</path-mapped-storage.version>
         <toolchains-plugin.version>3.0.0</toolchains-plugin.version>
-        <cassandra-maven-plugin.version>3.6</cassandra-maven-plugin.version>
-        <cassandra-unit.version>3.7.1.0</cassandra-unit.version>
+        <cassandra-maven-plugin.version>3.8</cassandra-maven-plugin.version>
+        <!--<cassandra-unit.version>3.7.1.0</cassandra-unit.version>-->
         <indysecurity.verison>1.0</indysecurity.verison>
         <quarkus.package.type>uber-jar</quarkus.package.type>
+        <skipTests>false</skipTests>
     </properties>
 
     <dependencies>
@@ -69,7 +70,7 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-vertx-web</artifactId>
+            <artifactId>quarkus-reactive-routes</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -106,7 +107,7 @@
         <!-- quarkus otel deps start -->
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-opentelemetry-exporter-otlp</artifactId>
+            <artifactId>quarkus-opentelemetry</artifactId>
         </dependency>
         <dependency>
             <groupId>io.opentelemetry</groupId>
@@ -156,12 +157,12 @@
             <artifactId>quarkus-junit5-mockito</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.cassandraunit</groupId>
             <artifactId>cassandra-unit</artifactId>
             <version>${cassandra-unit.version}</version>
             <scope>test</scope>
-        </dependency>
+        </dependency>-->
     </dependencies>
 
     <build>
@@ -173,7 +174,7 @@
         </resources>
         <plugins>
             <plugin>
-                <groupId>io.quarkus</groupId>
+                <groupId>io.quarkus.platform</groupId>
                 <artifactId>quarkus-maven-plugin</artifactId>
             </plugin>
             <plugin>
@@ -227,9 +228,50 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${version.plugin.surefire}</version>
+                <configuration>
+                    <includes>
+                        <exclude>**/*IT.java</exclude>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cassandra-maven-plugin</artifactId>
                 <version>${cassandra-maven-plugin.version}</version>
+                <configuration>
+                    <startNativeTransport>true</startNativeTransport>
+                    <nativeTransportPort>9942</nativeTransportPort>
+                    <loadFailureIgnore>true</loadFailureIgnore>
+                    <script>${basedir}/src/test/resources/cql/load.cql</script>
+                    <skip>${skipTests}</skip>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.java.dev.jna</groupId>
+                        <artifactId>jna</artifactId>
+                        <version>5.8.0</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>cassandra</id>
+                        <goals>
+                            <goal>start</goal>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

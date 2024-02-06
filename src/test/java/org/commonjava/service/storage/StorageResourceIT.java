@@ -15,7 +15,6 @@
  */
 package org.commonjava.service.storage;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
@@ -32,7 +31,6 @@ import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
@@ -42,8 +40,8 @@ import static org.commonjava.service.storage.jaxrs.StorageResource.API_BASE;
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
-public class StorageResourceTest
-                extends StorageTest
+public class StorageResourceIT
+                extends StorageIT
 {
     @Test
     public void testGetFile()
