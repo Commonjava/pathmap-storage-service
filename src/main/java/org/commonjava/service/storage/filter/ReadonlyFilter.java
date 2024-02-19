@@ -18,14 +18,14 @@ package org.commonjava.service.storage.filter;
 import io.vertx.core.http.HttpServerRequest;
 import org.commonjava.service.storage.config.StorageServiceConfig;
 
-import javax.enterprise.inject.spi.CDI;
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.Provider;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.ws.rs.HttpMethod;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
+import jakarta.ws.rs.ext.Provider;
 
 @Provider
 public class ReadonlyFilter implements ContainerRequestFilter

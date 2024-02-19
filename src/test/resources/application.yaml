@@ -2,12 +2,15 @@
 quarkus:
     http:
         port: 8080
+        test-port: 0
         read-timeout: 30m
         limits:
-          max-body-size: 500M
+          max-body-size: 1024M
 
     package:
         uber-jar: true
+    oidc:
+        enabled: false
 
     # Logging (disable console on prod)
     log:
@@ -34,7 +37,7 @@ quarkus:
 
 cassandra:
     host: localhost
-    port: 9142
+    port: 9942
     user: cassandra
     pass: cassandra
     keyspace: indystorage

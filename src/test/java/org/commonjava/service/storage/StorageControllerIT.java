@@ -21,7 +21,7 @@ import org.commonjava.service.storage.dto.BatchCleanupResult;
 import org.commonjava.service.storage.dto.FileInfoObj;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,7 +31,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
-public class StorageControllerTest extends StorageTest
+public class StorageControllerIT extends StorageIT
 {
     @Inject
     StorageController controller;

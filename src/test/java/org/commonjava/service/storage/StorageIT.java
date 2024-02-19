@@ -17,18 +17,17 @@ package org.commonjava.service.storage;
 
 import io.quarkus.test.common.http.TestHTTPResource;
 import org.apache.commons.io.IOUtils;
-import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.commonjava.storage.pathmapped.core.PathMappedFileManager;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
-public abstract class StorageTest
+public abstract class StorageIT
 {
     protected final String PATH = "io/quarkus/quarkus-junit5/quarkus-junit5-1.12.0.Final.jar";
     protected final String DIR = "io/quarkus/quarkus-junit5";
@@ -45,13 +44,28 @@ public abstract class StorageTest
     @BeforeAll
     public static void init() throws Exception
     {
-        EmbeddedCassandraServerHelper.startEmbeddedCassandra();
+        /*
+         * The reason I dropped embedded cassandra:
+         * Previously I use 'cassandra-unit' which is great because we can run the unit tests both
+         * by mvn command and in IDEA. Unfortunately, after upgrading to Quarkus 3.x, there is a
+         * dependence change, and it breaks the embedded cassandra.
+         *
+         * Because of that, I moved to cassandra-maven-plugin in pom.xml. It works well with Quarkus 3
+         * to start/stop cassandra. But I have to move Junit tests to integration tests because
+         * this plugin works for integration phase only. The test classes are refactored as '*IT.java'.
+         * The downside is that we can not run the IT tests in IDEA by simply clicking the 'Run'.
+         * We need to do from command line as 'mvn verify'. Or we run 'mvn cassandra:start' beforehand
+         * then run IT tests in IDEA.
+         *
+         * ruhan Feb 9, 2024
+         */
+        //EmbeddedCassandraServerHelper.startEmbeddedCassandra();
     }
 
     @AfterAll
     public static void stop() throws Exception
     {
-        EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
+        //EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
     }
 
     @BeforeEach

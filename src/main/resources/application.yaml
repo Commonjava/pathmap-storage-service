@@ -4,7 +4,7 @@ quarkus:
         port: 8080
         read-timeout: 30m
         limits:
-          max-body-size: 500M
+          max-body-size: 1024M
     package:
         type: uber-jar
     oidc:
