@@ -5,8 +5,6 @@ quarkus:
         read-timeout: 30m
         limits:
           max-body-size: 1024M
-    package:
-        type: uber-jar
     oidc:
         enabled: true
         auth-server-url: "https://localhost:8543/realms/indyreposervice"
@@ -20,14 +18,15 @@ quarkus:
     security:
         auth:
             enabled-in-dev-mode: false
-    opentelemetry:
+    otel:
         enabled: true
-        tracer:
+        traces:
             enabled: true
             sampler:
-                ~: ratio
-                ratio: 0.05
-            "resource-attributes":
+                ~: traceidratio
+                arg: 0.05
+        resource:
+            attributes":
                 - "service.name=pathmap-storage-service"
                 - "sample.rate=0.05"
                 - "deployment.environment=localhost"
@@ -70,8 +69,6 @@ storage:
 
 "%dev":
     quarkus:
-        kubernetes-config:
-            enabled: false
         log:
             level: INFO
             category:
@@ -86,6 +83,8 @@ storage:
                 rotation:
                     max-backup-index: 5
                     max-file-size: 10M
+        oidc:
+            enabled: false
 
     cassandra:
         host: localhost
