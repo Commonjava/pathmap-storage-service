@@ -26,12 +26,13 @@ quarkus:
                 ~: traceidratio
                 arg: 0.05
         resource:
-            attributes":
+            attributes:
                 - "service.name=pathmap-storage-service"
                 - "sample.rate=0.05"
                 - "deployment.environment=localhost"
-#            exporter:
-#                otlp:
+#        exporter:
+#            otlp:
+#                traces:
 #                    endpoint: http://localhost:4317
 
     # Logging (disable console on prod)
