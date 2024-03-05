@@ -21,9 +21,11 @@ import org.commonjava.storage.pathmapped.config.DefaultPathMappedStorageConfig;
 import org.commonjava.storage.pathmapped.config.PathMappedStorageConfig;
 import org.commonjava.storage.pathmapped.core.FileBasedPhysicalStore;
 import org.commonjava.storage.pathmapped.core.PathMappedFileManager;
+import org.commonjava.storage.pathmapped.core.S3PhysicalStore;
 import org.commonjava.storage.pathmapped.pathdb.datastax.CassandraPathDB;
 import org.commonjava.storage.pathmapped.spi.PathDB;
 import org.commonjava.storage.pathmapped.spi.PhysicalStore;
+import software.amazon.awssdk.services.s3.S3Client;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
@@ -42,6 +44,9 @@ public class FileManagerProducer
     @Inject
     StorageServiceConfig storageConfig;
 
+    @Inject
+    S3Client s3Client;
+
     @Produces
     public PathMappedFileManager getFileManager()
     {
@@ -55,10 +60,19 @@ public class FileManagerProducer
         PathMappedStorageConfig config = new DefaultPathMappedStorageConfig( props );
 
         PathDB pathDB = new CassandraPathDB( config );
-        PhysicalStore physicalStore = new FileBasedPhysicalStore( storageConfig.baseDir() );
+        PhysicalStore physicalStore;
+        String storageType = storageConfig.type();
 
-        PathMappedFileManager fileManager = new PathMappedFileManager( config, pathDB, physicalStore );
-        return fileManager;
+        if ( StorageServiceConfig.STORAGE_S3.equals( storageType ) )
+        {
+            physicalStore = new FileBasedPhysicalStore( storageConfig.baseDir() );
+        }
+        else
+        {
+            physicalStore = new S3PhysicalStore( s3Client, storageConfig.bucketName() );
+        }
+
+        return new PathMappedFileManager( config, pathDB, physicalStore );
     }
 
 }
