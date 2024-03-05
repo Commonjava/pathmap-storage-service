@@ -42,7 +42,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <path-mapped-storage.version>2.6</path-mapped-storage.version>
+        <path-mapped-storage.version>2.7-SNAPSHOT</path-mapped-storage.version>
         <toolchains-plugin.version>3.0.0</toolchains-plugin.version>
         <cassandra-maven-plugin.version>3.8</cassandra-maven-plugin.version>
         <!--<cassandra-unit.version>3.7.1.0</cassandra-unit.version>-->
@@ -51,6 +51,17 @@
         <skipTests>false</skipTests>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.quarkus.platform</groupId>
+                <artifactId>quarkus-amazon-services-bom</artifactId>
+                <version>3.6.4</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -144,6 +155,14 @@
             <groupId>org.commonjava.indy.service</groupId>
             <artifactId>indy-security</artifactId>
             <version>${indysecurity.verison}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkiverse.amazonservices</groupId>
+            <artifactId>quarkus-amazon-s3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>url-connection-client</artifactId>
         </dependency>
 
         <!-- for unit test -->

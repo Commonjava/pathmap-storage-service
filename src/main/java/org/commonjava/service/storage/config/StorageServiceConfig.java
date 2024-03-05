@@ -17,9 +17,10 @@ package org.commonjava.service.storage.config;
 
 import io.quarkus.runtime.Startup;
 import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.WithDefault;
 import io.smallrye.config.WithName;
-
 import jakarta.enterprise.context.ApplicationScoped;
+
 import java.io.File;
 
 @Startup
@@ -27,6 +28,10 @@ import java.io.File;
 @ApplicationScoped
 public interface StorageServiceConfig
 {
+    String STORAGE_S3 = "s3";
+
+    String STORAGE_NFS = "nfs";
+
     @WithName( "baseDir" )
     File baseDir();
 
@@ -35,4 +40,12 @@ public interface StorageServiceConfig
 
     @WithName( "removableFilesystemPattern" )
     String removableFilesystemPattern();
+
+    @WithName( "type" )
+    @WithDefault( STORAGE_NFS )
+    String type();
+
+    @WithName( "bucket.name" )
+    @WithDefault( "" )
+    String bucketName();
 }
