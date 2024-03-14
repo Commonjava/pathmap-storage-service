@@ -19,7 +19,7 @@
 
 name: Merge / Push Build
 
-on: [push]
+on: [push, workflow_dispatch]
 
 jobs:
   publish-snapshot:
