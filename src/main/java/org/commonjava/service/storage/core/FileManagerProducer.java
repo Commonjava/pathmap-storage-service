@@ -65,11 +65,11 @@ public class FileManagerProducer
 
         if ( StorageServiceConfig.STORAGE_S3.equals( storageType ) )
         {
-            physicalStore = new FileBasedPhysicalStore( storageConfig.baseDir() );
+            physicalStore = new S3PhysicalStore( s3Client, storageConfig.bucketName() );
         }
         else
         {
-            physicalStore = new S3PhysicalStore( s3Client, storageConfig.bucketName() );
+            physicalStore = new FileBasedPhysicalStore( storageConfig.baseDir() );
         }
 
         return new PathMappedFileManager( config, pathDB, physicalStore );
