@@ -70,9 +70,9 @@ storage:
     baseDir: "/tmp"
     readonly: false
     removableFilesystemPattern: ".+:(remote|group):.+"
-    type: s3
-    bucket:
-        name: test
+    #type: s3
+    #bucket:
+    #    name: test
 
 "%dev":
     quarkus:

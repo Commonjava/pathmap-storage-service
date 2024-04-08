@@ -46,6 +46,6 @@ public interface StorageServiceConfig
     String type();
 
     @WithName( "bucket.name" )
-    @WithDefault( "" )
+    @WithDefault( "test" )
     String bucketName();
 }
