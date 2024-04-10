@@ -18,7 +18,6 @@ package org.commonjava.service.storage.core;
 import org.commonjava.service.storage.config.CassandraConfig;
 import org.commonjava.service.storage.config.StorageServiceConfig;
 import org.commonjava.storage.pathmapped.config.DefaultPathMappedStorageConfig;
-import org.commonjava.storage.pathmapped.config.PathMappedStorageConfig;
 import org.commonjava.storage.pathmapped.core.FileBasedPhysicalStore;
 import org.commonjava.storage.pathmapped.core.PathMappedFileManager;
 import org.commonjava.storage.pathmapped.core.S3PhysicalStore;
@@ -38,6 +37,8 @@ import static org.commonjava.storage.pathmapped.pathdb.datastax.util.CassandraPa
 @ApplicationScoped
 public class FileManagerProducer
 {
+    private static final int STORAGE_GC_BATCH_SIZE = 100;
+
     @Inject
     CassandraConfig cassandraConfig;
 
@@ -57,8 +58,9 @@ public class FileManagerProducer
         props.put( PROP_CASSANDRA_USER, cassandraConfig.user() );
         props.put( PROP_CASSANDRA_PASS, cassandraConfig.pass() );
 
-        PathMappedStorageConfig config = new DefaultPathMappedStorageConfig( props );
-
+        DefaultPathMappedStorageConfig config = new DefaultPathMappedStorageConfig( props );
+        config.setGcBatchSize( STORAGE_GC_BATCH_SIZE );
+        
         PathDB pathDB = new CassandraPathDB( config );
         PhysicalStore physicalStore;
         String storageType = storageConfig.type();
