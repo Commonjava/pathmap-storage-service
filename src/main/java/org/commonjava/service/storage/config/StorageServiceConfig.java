@@ -45,6 +45,10 @@ public interface StorageServiceConfig
     @WithDefault("false")
     boolean physicalFileExistenceCheck();
 
+    @WithName( "gcBatchSize" )
+    @WithDefault("100")
+    int gcBatchSize();
+
     @WithName( "type" )
     @WithDefault( STORAGE_NFS )
     String type();
