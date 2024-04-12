@@ -42,6 +42,7 @@ public class LocalStackTestResource implements QuarkusTestResourceLifecycleManag
 
         HashMap<String, String> map = new HashMap<>();
         map.put("storage.type", "s3");
+        map.put("storage.physicalFileExistenceCheck", "true");
         map.put("storage.bucket.name", "test");
         map.put("quarkus.s3.endpoint-override", localStackContainer.getEndpointOverride(S3).toString());
         map.put("quarkus.s3.aws.region", localStackContainer.getRegion());

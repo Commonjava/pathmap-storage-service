@@ -50,6 +50,21 @@ public class S3StorageIT
                 .statusCode( 200 );
     }
 
+    /**
+     * We set "storage.physicalFileExistenceCheck" to "true" in LocalStackTestResource so than it checks
+     * both pathDB and physical store.
+     */
+    @Test
+    public void testFileExist()
+    {
+        given().pathParam( "filesystem", filesystem )
+                .pathParam( "path", PATH )
+                .when()
+                .head( API_BASE + "/content/{filesystem}/{path}" )
+                .then()
+                .statusCode( 200 );
+    }
+
     @Test
     public void testPutFile()
     {

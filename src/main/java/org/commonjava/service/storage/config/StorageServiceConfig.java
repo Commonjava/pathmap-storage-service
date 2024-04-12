@@ -41,6 +41,10 @@ public interface StorageServiceConfig
     @WithName( "removableFilesystemPattern" )
     String removableFilesystemPattern();
 
+    @WithName( "physicalFileExistenceCheck" )
+    @WithDefault("false")
+    boolean physicalFileExistenceCheck();
+
     @WithName( "type" )
     @WithDefault( STORAGE_NFS )
     String type();
