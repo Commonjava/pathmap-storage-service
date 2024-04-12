@@ -16,6 +16,7 @@
 package org.commonjava.service.storage.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.quarkus.runtime.Startup;
 import org.apache.commons.io.IOUtils;
 import org.commonjava.service.storage.dto.*;
 import org.commonjava.storage.pathmapped.core.PathMappedFileManager;
@@ -45,6 +46,7 @@ import static org.commonjava.service.storage.util.Utils.getDuration;
 import static org.commonjava.service.storage.util.Utils.sort;
 import static org.commonjava.storage.pathmapped.util.PathMapUtils.ROOT_DIR;
 
+@Startup
 @ApplicationScoped
 public class StorageController
 {

@@ -60,7 +60,9 @@ public class FileManagerProducer
 
         DefaultPathMappedStorageConfig config = new DefaultPathMappedStorageConfig( props );
         config.setGcBatchSize( STORAGE_GC_BATCH_SIZE );
-        
+        config.setPhysicalFileExistenceCheckEnabled( storageConfig.physicalFileExistenceCheck() );
+        config.setGcBatchSize( storageConfig.gcBatchSize() );
+
         PathDB pathDB = new CassandraPathDB( config );
         PhysicalStore physicalStore;
         String storageType = storageConfig.type();
