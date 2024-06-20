@@ -37,8 +37,6 @@ import static org.commonjava.storage.pathmapped.pathdb.datastax.util.CassandraPa
 @ApplicationScoped
 public class FileManagerProducer
 {
-    private static final int STORAGE_GC_BATCH_SIZE = 100;
-
     @Inject
     CassandraConfig cassandraConfig;
 
@@ -59,9 +57,9 @@ public class FileManagerProducer
         props.put( PROP_CASSANDRA_PASS, cassandraConfig.pass() );
 
         DefaultPathMappedStorageConfig config = new DefaultPathMappedStorageConfig( props );
-        config.setGcBatchSize( STORAGE_GC_BATCH_SIZE );
         config.setPhysicalFileExistenceCheckEnabled( storageConfig.physicalFileExistenceCheck() );
         config.setGcBatchSize( storageConfig.gcBatchSize() );
+        config.setGcIntervalInMinutes( storageConfig.gcIntervalInMinutes() );
 
         PathDB pathDB = new CassandraPathDB( config );
         PhysicalStore physicalStore;

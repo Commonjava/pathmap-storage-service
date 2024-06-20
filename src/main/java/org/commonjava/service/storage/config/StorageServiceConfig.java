@@ -49,6 +49,11 @@ public interface StorageServiceConfig
     @WithDefault("100")
     int gcBatchSize();
 
+    // value <= 0 disables gc effectively
+    @WithName( "gcIntervalInMinutes" )
+    @WithDefault("60")
+    int gcIntervalInMinutes();
+
     @WithName( "type" )
     @WithDefault( STORAGE_NFS )
     String type();
