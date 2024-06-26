@@ -265,8 +265,9 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>${version.plugin.surefire}</version>
                 <configuration>
+                    <skipITs>${skipTests}</skipITs>
                     <includes>
-                        <exclude>**/*IT.java</exclude>
+                        <include>**/*IT.java</include>
                     </includes>
                 </configuration>
                 <executions>
