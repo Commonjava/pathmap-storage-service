@@ -54,6 +54,10 @@ jobs:
       if: ${{ github.event.repository.fork == true }}
       run: mvn -B -e verify
 
+    - name: "Maven Build"
+      if: ${{ github.event.repository.fork == false }}
+      run: mvn -B -e clean install
+
     - name: Checkout tools repo
       uses: actions/checkout@v4
       with:
