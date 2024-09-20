@@ -60,6 +60,7 @@ public class FileManagerProducer
         config.setPhysicalFileExistenceCheckEnabled( storageConfig.physicalFileExistenceCheck() );
         config.setGcBatchSize( storageConfig.gcBatchSize() );
         config.setGcIntervalInMinutes( storageConfig.gcIntervalInMinutes() );
+        config.setDeduplicatePattern( storageConfig.deduplicatePattern() );
 
         PathDB pathDB = new CassandraPathDB( config );
         PhysicalStore physicalStore;

@@ -28,6 +28,8 @@ import org.commonjava.service.storage.dto.FileCopyResult;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -111,6 +113,44 @@ public class StorageResourceIT
         assertEquals( 200, response.statusCode() );
         assertNotNull( response.jsonPath().getString( "storagePath" ) );
         assertNotEquals( -1, response.jsonPath().getLong( "fileLength" ) );
+    }
+
+    @Test
+    public void testGetPathsByChecksum() throws Exception
+    {
+        // filesystem must match the 'deduplicatePattern'
+        final String g_filesystem = "generic-http:remote:g_filesystem";
+        final String checksum = "209094962790ca300e4e387f4b3dd130ff06ef9a9c3e08c2f96889334db4cf4c";
+
+        // upload the file to g_filesystem
+        try (InputStream in = url.openStream())
+        {
+            prepareFile( in, g_filesystem, PATH );
+        }
+
+        // test with right checksum
+        Response response = given().pathParam( "checksum", checksum )
+                                   .when()
+                                   .get( API_BASE + "/checksum/{checksum}" )
+                                   .then()
+                                   .extract()
+                                   .response();
+
+        assertEquals( 200, response.statusCode() );
+        //System.out.println(">>>" + response.jsonPath().getList( "" ));
+        assertTrue( response.jsonPath().getList( "" ).contains( g_filesystem + ":/" + PATH ) );
+
+        // test with wrong checksum
+        response = given().pathParam( "checksum", "wrong-094962790ca30" )
+                          .when()
+                          .get( API_BASE + "/checksum/{checksum}" )
+                          .then()
+                          .extract()
+                          .response();
+
+        assertEquals( 200, response.statusCode() );
+        //System.out.println(">>>" + response.getBody().asString() );
+        assertTrue( response.jsonPath().getList( "" ).isEmpty() );
     }
 
     @Test
