@@ -42,4 +42,5 @@ cassandra:
 storage:
     baseDir: "/tmp"
     readonly: false
+    deduplicatePattern: "(generic-http|npm).+"
     removableFilesystemPattern: ".+:(remote|group):.+"

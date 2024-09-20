@@ -20,6 +20,7 @@ import io.quarkus.runtime.Startup;
 import org.apache.commons.io.IOUtils;
 import org.commonjava.service.storage.dto.*;
 import org.commonjava.storage.pathmapped.core.PathMappedFileManager;
+import org.commonjava.storage.pathmapped.model.FileChecksum;
 import org.commonjava.storage.pathmapped.model.Filesystem;
 import org.commonjava.storage.pathmapped.model.PathMap;
 import org.commonjava.storage.pathmapped.spi.PathDB;
@@ -40,6 +41,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.commonjava.service.storage.util.Utils.getDuration;
@@ -164,6 +166,22 @@ public class StorageController
             return result;
         }
         return null;
+    }
+
+    /**
+     * Get paths (each includes the filesystem+path) by file's checksum.
+     * @return The paths set (because each physical file may link to multiple logical files).
+     */
+    public Set<String> getFilePathsByChecksum( String checksum )
+    {
+        final PathDB pathDB = fileManager.getPathDB();
+        FileChecksum c = pathDB.getFileChecksum( checksum );
+        if ( c != null )
+        {
+            String fileId = c.getFileId();
+            return pathDB.getPathsByFileId( fileId );
+        }
+        return emptySet();
     }
 
     public BatchCleanupResult cleanup(Set<String> paths, Set<String> filesystems )
@@ -333,5 +351,4 @@ public class StorageController
 
         return new FileCopyResult( true, completed, skipped );
     }
-
 }

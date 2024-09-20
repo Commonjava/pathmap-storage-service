@@ -41,6 +41,9 @@ public interface StorageServiceConfig
     @WithName( "removableFilesystemPattern" )
     String removableFilesystemPattern();
 
+    @WithName( "deduplicatePattern" )
+    String deduplicatePattern();
+
     @WithName( "physicalFileExistenceCheck" )
     @WithDefault("false")
     boolean physicalFileExistenceCheck();

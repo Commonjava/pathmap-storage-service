@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -212,6 +213,20 @@ public class StorageResource
         FileInfoObj result = controller.getFileInfo( filesystem, path );
         logger.info( "File info: {}", result );
         return responseHelper.formatOkResponseWithJsonEntity( result );
+    }
+
+    @Operation( summary = "Get paths (each includes 'filesystem + path') by file's checksum." )
+    @APIResponses( { @APIResponse( responseCode = "200",
+                    description = "The paths or 'empty set' if not found." ) } )
+    @Produces( APPLICATION_JSON )
+    @GET
+    @Path( "checksum/{checksum}" )
+    public Response getFilePathsByChecksum(
+                    final @Parameter( in = PATH, required = true ) @PathParam( "checksum" ) String checksum )
+    {
+        final Set<String> paths = controller.getFilePathsByChecksum( checksum );
+        logger.info( "File paths: {}", paths );
+        return responseHelper.formatOkResponseWithJsonEntity( paths );
     }
 
     @Operation( summary = "Copy files." )
