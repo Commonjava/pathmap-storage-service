@@ -42,7 +42,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <path-mapped-storage.version>3.0-SNAPSHOT</path-mapped-storage.version>
+        <path-mapped-storage.version>3.0</path-mapped-storage.version>
         <toolchains-plugin.version>3.0.0</toolchains-plugin.version>
         <cassandra-maven-plugin.version>3.8</cassandra-maven-plugin.version>
         <quarkus.package.type>uber-jar</quarkus.package.type>
