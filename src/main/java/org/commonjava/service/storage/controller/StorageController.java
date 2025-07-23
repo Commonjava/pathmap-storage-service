@@ -46,6 +46,10 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.commonjava.service.storage.util.Utils.getDuration;
 import static org.commonjava.service.storage.util.Utils.sort;
+import static org.commonjava.service.storage.util.Utils.depth;
+import static org.commonjava.service.storage.util.Utils.getParentPath;
+import static org.commonjava.service.storage.util.Utils.getAllCandidates;
+import static org.commonjava.service.storage.util.Utils.normalizeFolderPath;
 import static org.commonjava.storage.pathmapped.util.PathMapUtils.ROOT_DIR;
 
 @Startup
@@ -267,6 +271,77 @@ public class StorageController
     {
         Collection<? extends Filesystem> ret = getEmptyFilesystems();
         ret.forEach( filesystem -> fileManager.purgeFilesystem( filesystem ));
+    }
+
+    /**
+     * Cleans up (deletes) the given empty folders and, if possible, their parent folders up to the root.
+     * <p>
+     * Optimization details:
+     * <ul>
+     *   <li>Collects all input folders and their ancestors as candidates for deletion.</li>
+     *   <li>Sorts candidates by depth (deepest first) to ensure children are processed before parents.</li>
+     *   <li>Attempts to delete each folder only once (tracked in the processed set).</li>
+     *   <li>If a folder is not empty, marks it and all its ancestors as processed, since their parents must also be non-empty.</li>
+     *   <li>Tracks succeeded and failed deletions in the result object.</li>
+     *   <li>Returns a BatchDeleteResult with all attempted deletions for client inspection.</li>
+     * </ul>
+     * This approach avoids redundant deletion attempts and is efficient for overlapping directory trees.
+     */
+    public BatchDeleteResult cleanupEmptyFolders(String filesystem, Collection<String> paths) {
+        Set<String> allCandidates = getAllCandidates(paths);
+        // Sort by depth, deepest first
+        List<String> sortedCandidates = new ArrayList<>(allCandidates);
+        sortedCandidates.sort((a, b) -> Integer.compare(depth(b), depth(a)));
+        logger.debug("Sorted candidate folders for cleanup (deepest first): {}", sortedCandidates);
+
+        Set<String> succeeded = new HashSet<>();
+        Set<String> failed = new HashSet<>();
+        Set<String> processed = new HashSet<>();
+        for (String folder : sortedCandidates) {
+            if (processed.contains(folder)) {
+                continue;
+            }
+            processed.add(folder);
+            try {
+                if (!fileManager.isDirectory(filesystem, folder)) {
+                    logger.debug("Path is not a directory or does not exist, skipping: {} in filesystem: {}", folder, filesystem);
+                    continue;
+                }
+                String[] contents = fileManager.list(filesystem, folder);
+                if (contents == null || contents.length == 0) {
+                    boolean deleted = fileManager.delete(filesystem, normalizeFolderPath(folder));
+                    if (deleted) {
+                        succeeded.add(folder);
+                        logger.debug("Folder deleted: {} in filesystem: {}", folder, filesystem);
+                    } else {
+                        failed.add(folder);
+                    }
+                } else {
+                    logger.debug("Folder not empty, skipping cleanup: {} in filesystem: {}, contents: {}", folder, filesystem, Arrays.toString(contents));
+                    // Mark this folder and all its ancestors as processed
+                    markAncestorsProcessed(folder, processed);
+                }
+            } catch (Exception e) {
+                logger.warn("Failed to clean up folder: {} in filesystem: {}. Error: {}", folder, filesystem, e.getMessage());
+                failed.add(folder);
+                markAncestorsProcessed(folder, processed);
+            }
+        }
+        logger.info("Cleanup empty folders result: succeeded={}, failed={}", succeeded, failed);
+        BatchDeleteResult result = new BatchDeleteResult();
+        result.setFilesystem(filesystem);
+        result.setSucceeded(succeeded);
+        result.setFailed(failed);
+        return result;
+    }
+
+    // Mark the given folder and all its ancestors as processed
+    private void markAncestorsProcessed(String folder, Set<String> processed) {
+        String current = folder;
+        while (current != null && !current.isEmpty() && !current.equals("/")) {
+            processed.add(current);
+            current = getParentPath(current);
+        }
     }
 
     /**

@@ -85,6 +85,14 @@ public abstract class StorageIT
         }
     }
 
+    protected void createEmptyDirectory(String filesystem, String dir) throws Exception {
+        String dummyFile = dir + "/.keep";
+        try (OutputStream out = fileManager.openOutputStream(filesystem, dummyFile)) {
+            out.write(0);
+        }
+        fileManager.delete(filesystem, dummyFile);
+    }
+
     /**
      * Override this if your test case don't need to prepare the PATH
      * @return
