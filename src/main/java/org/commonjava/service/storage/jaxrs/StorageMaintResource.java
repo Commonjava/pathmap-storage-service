@@ -20,6 +20,7 @@ import org.commonjava.service.storage.controller.StorageController;
 import org.commonjava.service.storage.dto.BatchDeleteResult;
 import org.commonjava.service.storage.util.ResponseHelper;
 import org.commonjava.storage.pathmapped.model.Filesystem;
+import org.commonjava.service.storage.dto.BatchDeleteRequest;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
@@ -93,5 +94,27 @@ public class StorageMaintResource
         BatchDeleteResult result = controller.purgeFilesystem( filesystem );
         logger.debug( "Purge filesystem result: {}", result );
         return responseHelper.formatOkResponseWithJsonEntity( result );
+    }
+
+    /**
+     * Cleans up multiple empty folders in a filesystem.
+     *
+     * @param request BatchDeleteRequest containing the filesystem and the set of folder paths to attempt to clean up.
+     *                Only empty folders will be deleted; non-empty folders will be skipped.
+     *                If a parent folder becomes empty as a result, it will also be deleted recursively up to the root.
+     */
+    @Operation( summary = "Cleanup multiple empty folders in a filesystem. Always returns 200 OK for easier client handling; "
+                    + "failures are reported in the result object." )
+    @APIResponses( { @APIResponse( responseCode = "200",
+                    description = "Cleanup done (some folders may have failed, see result object)." ) } )
+    @Consumes( APPLICATION_JSON )
+    @Produces( APPLICATION_JSON )
+    @DELETE
+    @Path( "folders/empty" )
+    public Response cleanupEmptyFolders( BatchDeleteRequest request )
+    {
+        logger.info( "Cleanup empty folders: filesystem={}, paths={}", request.getFilesystem(), request.getPaths() );
+        BatchDeleteResult result = controller.cleanupEmptyFolders( request.getFilesystem(), request.getPaths() );
+        return Response.ok(result).build();
     }
 }

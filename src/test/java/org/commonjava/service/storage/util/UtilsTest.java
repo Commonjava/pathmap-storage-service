@@ -20,7 +20,11 @@ import org.junit.jupiter.api.Test;
 import java.time.Duration;
 
 import static org.commonjava.service.storage.util.Utils.getDuration;
+import static org.commonjava.service.storage.util.Utils.getAllCandidates;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Arrays;
 
 public class UtilsTest
 {
@@ -38,6 +42,21 @@ public class UtilsTest
         Duration d1 = getDuration("1d5h3m10s" );
         Duration d2 = getDuration("p1dt5h3m10s" );
         assertEquals( d1, d2 );
+    }
+
+    /*
+     * Test getAllCandidates for:
+     * - Collecting all input folders and their ancestors
+     * - Excluding root
+     */
+    @Test
+    public void testGetAllCandidates() {
+        Set<String> input = new HashSet<>(Arrays.asList("a/b/c", "a/d"));
+        Set<String> expected = new HashSet<>(Arrays.asList(
+            "a/b/c", "a/b", "a", "a/d"
+        ));
+        Set<String> result = getAllCandidates(input);
+        assertEquals(expected, result);
     }
 
 }
