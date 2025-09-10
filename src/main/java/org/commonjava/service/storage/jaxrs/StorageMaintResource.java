@@ -109,11 +109,11 @@ public class StorageMaintResource
                     description = "Cleanup done (some folders may have failed, see result object)." ) } )
     @Consumes( APPLICATION_JSON )
     @Produces( APPLICATION_JSON )
-    @DELETE
+    @POST
     @Path( "folders/empty" )
     public Response cleanupEmptyFolders( BatchDeleteRequest request )
     {
-        logger.info( "Cleanup empty folders: filesystem={}, paths={}", request.getFilesystem(), request.getPaths() );
+        logger.info( "Cleanup empty folders, request: {}", request );
         BatchDeleteResult result = controller.cleanupEmptyFolders( request.getFilesystem(), request.getPaths() );
         return Response.ok(result).build();
     }

@@ -93,7 +93,7 @@ public class StorageMaintResourceIT extends StorageIT {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(request)
             .when()
-                .delete("/api/storage/maint/folders/empty")
+                .post("/api/storage/maint/folders/empty")
             .then()
                 .statusCode(200)
                 .extract().as(BatchDeleteResult.class);
