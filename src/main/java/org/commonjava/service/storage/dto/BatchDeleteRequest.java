@@ -22,6 +22,8 @@ import java.util.Set;
  */
 public class BatchDeleteRequest
 {
+    private String internalId;
+
     private Set<String> paths;
 
     private String filesystem;
@@ -42,11 +44,20 @@ public class BatchDeleteRequest
         this.filesystem = filesystem;
     }
 
+    public String getInternalId()
+    {
+        return internalId;
+    }
+
+    public void setInternalId( String internalId )
+    {
+        this.internalId = internalId;
+    }
+
     @Override
-    public String toString() {
-        return "BatchDeleteRequest{" +
-                "paths=" + paths +
-                ", filesystem='" + filesystem + '\'' +
-                '}';
+    public String toString()
+    {
+        return "BatchDeleteRequest{" + "internalId='" + internalId + '\'' + ", paths=" + paths + ", filesystem='"
+                        + filesystem + '\'' + '}';
     }
 }
