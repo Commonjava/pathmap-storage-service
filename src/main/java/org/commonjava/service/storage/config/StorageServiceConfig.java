@@ -64,4 +64,8 @@ public interface StorageServiceConfig
     @WithName( "bucket.name" )
     @WithDefault( "test" )
     String bucketName();
+
+    @WithName( "filesystemsCacheTtlSeconds" )
+    @WithDefault( "600" )
+    int filesystemsCacheTtlSeconds();
 }

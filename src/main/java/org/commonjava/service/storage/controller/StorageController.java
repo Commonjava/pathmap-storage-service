@@ -18,6 +18,7 @@ package org.commonjava.service.storage.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.runtime.Startup;
 import org.apache.commons.io.IOUtils;
+import org.commonjava.service.storage.config.StorageServiceConfig;
 import org.commonjava.service.storage.dto.*;
 import org.commonjava.storage.pathmapped.core.PathMappedFileManager;
 import org.commonjava.storage.pathmapped.model.FileChecksum;
@@ -61,9 +62,15 @@ public class StorageController
     @Inject
     PathMappedFileManager fileManager;
 
+    @Inject
+    StorageServiceConfig config;
+
     private ObjectMapper objectMapper = new ObjectMapper();
 
     private static final int DEFAULT_RECURSIVE_LIST_LIMIT = 5000;
+
+    // Cache for filesystems list
+    private volatile CachedFilesystems cachedFilesystems;
 
     public InputStream openInputStream( String fileSystem, String path) throws IOException
     {
@@ -248,16 +255,36 @@ public class StorageController
         {
             fileManager.purgeFilesystem( statistics );
         }
+        invalidateFilesystemsCache();
         return ret;
     }
 
     public Collection<String> getFilesystems()
     {
-        Collection<? extends Filesystem> filesystems = fileManager.getFilesystems();
-        if ( filesystems != null ) {
-            return filesystems.stream().map(filesystem -> filesystem.getFilesystem()).sorted().collect(Collectors.toList());
+        CachedFilesystems cached = cachedFilesystems;
+        long now = System.currentTimeMillis();
+        
+        // Check if cache is valid
+        if ( cached != null && ( now - cached.timestamp ) < TimeUnit.SECONDS.toMillis( config.filesystemsCacheTtlSeconds() ) )
+        {
+            logger.debug( "Returning cached filesystems list (age: {}ms)", now - cached.timestamp );
+            return cached.filesystems;
         }
-        return emptyList();
+        
+        // Cache miss or expired - fetch from database
+        logger.debug( "Cache miss or expired, fetching filesystems from database" );
+        Collection<? extends Filesystem> filesystems = fileManager.getFilesystems();
+        Collection<String> result;
+        if ( filesystems != null ) {
+            result = filesystems.stream().map(filesystem -> filesystem.getFilesystem()).sorted().collect(Collectors.toList());
+        } else {
+            result = emptyList();
+        }
+        
+        // Update cache
+        cachedFilesystems = new CachedFilesystems( result, now );
+        logger.debug( "Cached filesystems list (size: {})", result.size() );
+        return result;
     }
 
     public Collection<? extends Filesystem> getEmptyFilesystems()
@@ -271,6 +298,7 @@ public class StorageController
     {
         Collection<? extends Filesystem> ret = getEmptyFilesystems();
         ret.forEach( filesystem -> fileManager.purgeFilesystem( filesystem ));
+        invalidateFilesystemsCache();
     }
 
     /**
@@ -425,5 +453,29 @@ public class StorageController
         });
 
         return new FileCopyResult( true, completed, skipped );
+    }
+
+    /**
+     * Invalidates the filesystems cache. Should be called whenever filesystems are added or removed.
+     */
+    private void invalidateFilesystemsCache()
+    {
+        logger.debug( "Invalidating filesystems cache" );
+        cachedFilesystems = null;
+    }
+
+    /**
+     * Simple cache entry for filesystems list.
+     */
+    private static class CachedFilesystems
+    {
+        final Collection<String> filesystems;
+        final long timestamp;
+
+        CachedFilesystems( Collection<String> filesystems, long timestamp )
+        {
+            this.filesystems = filesystems;
+            this.timestamp = timestamp;
+        }
     }
 }

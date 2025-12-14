@@ -68,6 +68,7 @@ storage:
     readonly: false
     deduplicatePattern: "(generic-http|npm).+"
     removableFilesystemPattern: ".+:(remote|group):.+"
+    filesystemsCacheTtlSeconds: 600
     #type: s3
     #bucket:
     #    name: test
