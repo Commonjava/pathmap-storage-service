@@ -24,7 +24,7 @@ on: [pull_request]
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - uses: actions/checkout@v2
@@ -34,6 +34,11 @@ jobs:
       with:
         java-version: '11'
         distribution: 'adopt'
+
+    - name: Set up Maven
+      uses: stCarolas/setup-maven@v4.5
+      with:
+        maven-version: 3.8.8
 
     - name: maven-settings-xml-action
       uses: whelk-io/maven-settings-xml-action@v14
