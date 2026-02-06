@@ -72,7 +72,7 @@ public class FileManagerProducer
         }
         else
         {
-            physicalStore = new FileBasedPhysicalStore( storageConfig.baseDir() );
+            physicalStore = new LegacyReadonlyPhysicalStore( storageConfig.baseDir() );
         }
 
         return new PathMappedFileManager( config, pathDB, physicalStore );
